@@ -2,8 +2,11 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import { testApi } from './testApi';
 
+import { counterSlice } from './counterSlice';
+
 export const store = configureStore({
     reducer: {
+        counter: counterSlice.reducer,
         [testApi.reducerPath]: testApi.reducer,
     },
 
