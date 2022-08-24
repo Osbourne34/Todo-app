@@ -1,41 +1,49 @@
 import React, { SyntheticEvent } from 'react';
-import { ITokens } from '../../models/ITokens';
 
 import { useNavigate } from 'react-router-dom';
 
+import { useAppDispatch } from '../../hooks/redux';
 import { useLoginMutation } from '../../store/api/authApi/authApi';
+import { setAuth } from '../../store/reducers/authSlice/authSlice';
 
 import { useInput } from '../../hooks/input';
 import { useValideForm } from '../../hooks/valideForm';
 import { emailValidator, passwordValidator } from '../../utils/validate';
 
-import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 export const LoginForm = () => {
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const email = useInput(emailValidator);
     const password = useInput(passwordValidator);
     const isValidForm = useValideForm(email.hasError, password.hasError);
 
     const [login, { error }] = useLoginMutation();
+    console.log(error);
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
 
         await login({ email: email.value, password: password.value })
             .unwrap()
-            .then((res: ITokens) => {
+            .then((res) => {
                 localStorage.setItem('accessToken', res.access);
                 localStorage.setItem('refreshToken', res.refresh);
-
+                dispatch(setAuth(true));
                 navigate('/', { replace: true });
             });
     };
 
     return (
         <Box component="form" onSubmit={handleSubmit}>
+            <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
+                Неверный пароль или логин
+            </Alert>
+
             <TextField
                 value={email.value}
                 onChange={email.onChange}
