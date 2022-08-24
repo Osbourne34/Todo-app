@@ -13,7 +13,7 @@ import { emailValidator, passwordValidator } from '../../utils/validate';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 export const LoginForm = () => {
     const dispatch = useAppDispatch();
@@ -22,8 +22,7 @@ export const LoginForm = () => {
     const password = useInput(passwordValidator);
     const isValidForm = useValideForm(email.hasError, password.hasError);
 
-    const [login, { error }] = useLoginMutation();
-    console.log(error);
+    const [login, { error, isLoading }] = useLoginMutation();
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -40,9 +39,11 @@ export const LoginForm = () => {
 
     return (
         <Box component="form" onSubmit={handleSubmit}>
-            <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-                Неверный пароль или логин
-            </Alert>
+            {error && (
+                <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
+                    {error && 'status' in error && error.data.detail}
+                </Alert>
+            )}
 
             <TextField
                 value={email.value}
@@ -72,14 +73,15 @@ export const LoginForm = () => {
                 sx={{ mb: 2 }}
             />
 
-            <Button
+            <LoadingButton
                 disabled={!isValidForm}
+                loading={isLoading}
                 type="submit"
                 variant="contained"
                 fullWidth
             >
                 Войти
-            </Button>
+            </LoadingButton>
         </Box>
     );
 };

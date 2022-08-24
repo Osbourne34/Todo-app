@@ -23,7 +23,7 @@ export const axiosBaseQuery =
             params?: AxiosRequestConfig['params'];
         },
         unknown,
-        unknown
+        { status: any; data: any }
     > =>
     async ({ url, method, data, params }) => {
         try {
