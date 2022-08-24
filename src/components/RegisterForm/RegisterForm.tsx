@@ -1,10 +1,9 @@
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../../hooks/redux';
-import { useLoginMutation } from '../../store/api/authApi/authApi';
-import { setAuth } from '../../store/reducers/authSlice/authSlice';
+import axios, { AxiosError } from 'axios';
+import { API_URL } from '../../constants/api';
 
 import { useInput } from '../../hooks/input';
 import { useValideForm } from '../../hooks/valideForm';
@@ -14,29 +13,47 @@ import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
+import { IUser } from '../../models/IUser';
 
-export const LoginForm = () => {
-    const dispatch = useAppDispatch();
+export const RegisterForm = () => {
     const navigate = useNavigate();
     const email = useInput(emailValidator);
     const password = useInput(passwordValidator);
-    const isValidForm = useValideForm(email.hasError, password.hasError);
+    const [password2, setPassword2] = useState<string>('');
+    const [blur, setBlur] = useState<boolean>(false);
 
-    const [login, { error, isLoading }] = useLoginMutation();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<{ email: string[] } | undefined>(
+        undefined,
+    );
 
-    const handleSubmit = async (e: SyntheticEvent) => {
+    let passwordMatch: boolean =
+        Boolean(password.value) && password.value === password2;
+
+    const isValidForm = useValideForm(
+        email.hasError,
+        password.hasError,
+        !passwordMatch,
+    );
+
+    const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
-
-        await login({
-            email: email.value.toLowerCase(),
-            password: password.value,
-        })
-            .unwrap()
+        setIsLoading(true);
+        axios
+            .post<IUser>(API_URL + 'user/registrer/', {
+                email: email.value.toLowerCase(),
+                password: password.value,
+                password2,
+            })
             .then((res) => {
-                localStorage.setItem('accessToken', res.access);
-                localStorage.setItem('refreshToken', res.refresh);
-                dispatch(setAuth(true));
-                navigate('/', { replace: true });
+                setError(undefined);
+                navigate('/login', { replace: true });
+            })
+            .catch((err: AxiosError<{ email: string[] }>) =>
+                setError(err?.response?.data),
+            )
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
@@ -44,7 +61,7 @@ export const LoginForm = () => {
         <Box component="form" onSubmit={handleSubmit}>
             {error && (
                 <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-                    {error && 'status' in error && error.data.detail}
+                    {error.email[0]}
                 </Alert>
             )}
 
@@ -76,6 +93,19 @@ export const LoginForm = () => {
                 sx={{ mb: 2 }}
             />
 
+            <TextField
+                value={password2}
+                onChange={(e) => setPassword2(e.target.value)}
+                onBlur={() => setBlur(true)}
+                error={!passwordMatch && blur}
+                helperText={!passwordMatch && blur && 'Пароли не совпадают'}
+                label="Повтор пароля"
+                type="password"
+                required
+                fullWidth
+                sx={{ mb: 2 }}
+            />
+
             <LoadingButton
                 disabled={!isValidForm}
                 loading={isLoading}
@@ -83,7 +113,7 @@ export const LoginForm = () => {
                 variant="contained"
                 fullWidth
             >
-                Войти
+                Создать аккаунт
             </LoadingButton>
         </Box>
     );
