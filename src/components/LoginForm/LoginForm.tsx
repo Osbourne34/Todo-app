@@ -1,13 +1,12 @@
-import React, { SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../../hooks/redux';
-import { useLoginMutation } from '../../store/api/authApi/authApi';
-import { setAuth } from '../../store/reducers/authSlice/authSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { auth, login } from '../../store/reducers/authSlice/authSlice';
 
 import { useInput } from '../../hooks/input';
-import { useValideForm } from '../../hooks/valideForm';
+import { formValidation } from '../../utils/valideForm';
 import { emailValidator, passwordValidator } from '../../utils/validate';
 
 import Box from '@mui/material/Box';
@@ -17,25 +16,24 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 export const LoginForm = () => {
     const dispatch = useAppDispatch();
+    const { error, loading } = useAppSelector(auth);
+
     const navigate = useNavigate();
+
     const email = useInput(emailValidator);
     const password = useInput(passwordValidator);
-    const isValidForm = useValideForm(email.hasError, password.hasError);
-
-    const [login, { error, isLoading }] = useLoginMutation();
+    const isValidForm = useMemo(() => {
+        return formValidation(email.hasError, password.hasError);
+    }, [email.hasError, password.hasError]);
 
     const handleSubmit = async (e: SyntheticEvent) => {
         e.preventDefault();
 
-        await login({
-            email: email.value.toLowerCase(),
-            password: password.value,
-        })
+        dispatch(login({ email: email.value, password: password.value }))
             .unwrap()
             .then((res) => {
                 localStorage.setItem('accessToken', res.access);
                 localStorage.setItem('refreshToken', res.refresh);
-                dispatch(setAuth(true));
                 navigate('/', { replace: true });
             });
     };
@@ -44,7 +42,7 @@ export const LoginForm = () => {
         <Box component="form" onSubmit={handleSubmit}>
             {error && (
                 <Alert variant="filled" severity="error" sx={{ mb: 2 }}>
-                    {error && 'status' in error && error.data.detail}
+                    {error.data?.detail || 'Ошибка сети'}
                 </Alert>
             )}
 
@@ -78,7 +76,7 @@ export const LoginForm = () => {
 
             <LoadingButton
                 disabled={!isValidForm}
-                loading={isLoading}
+                loading={loading}
                 type="submit"
                 variant="contained"
                 fullWidth

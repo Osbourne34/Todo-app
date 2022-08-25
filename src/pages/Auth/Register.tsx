@@ -17,10 +17,6 @@ import { RegisterForm } from '../../components/RegisterForm/RegisterForm';
 export const Register = () => {
     const { isAuth } = useAppSelector(auth);
 
-    if (localStorage.getItem('refreshToken') && !isAuth) {
-        return null;
-    }
-
     if (isAuth) {
         return <Navigate to="/" />;
     }

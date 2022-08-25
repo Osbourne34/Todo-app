@@ -17,10 +17,6 @@ import { LoginForm } from '../../components/LoginForm/LoginForm';
 export const Login = () => {
     const { isAuth } = useAppSelector(auth);
 
-    if (localStorage.getItem('refreshToken') && !isAuth) {
-        return null;
-    }
-
     if (isAuth) {
         return <Navigate to="/" />;
     }

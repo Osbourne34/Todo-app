@@ -1,32 +1,124 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios, { AxiosError } from 'axios';
+import { API_URL } from '../../../constants/api';
+import { IAuthResponse } from '../../../models/IAuthResponse';
 import { IUser } from '../../../models/IUser';
 import { RootState } from '../../store';
 
-interface AuthState {
+type AuthState = {
     isAuth: boolean;
-    user: IUser | null;
-}
+    loading: boolean;
+    loadingForBackdrop: boolean;
+    error:
+        | {
+              status: number | undefined;
+              data: any;
+          }
+        | undefined;
+};
 
 const initialState: AuthState = {
     isAuth: false,
-    user: null,
+    loading: false,
+    loadingForBackdrop: false,
+    error: undefined,
 };
+
+export const login = createAsyncThunk<
+    IAuthResponse,
+    { email: string; password: string },
+    { rejectValue: AuthState['error'] }
+>('auth/login', async (body, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(API_URL + 'user/token/', body);
+        return response.data;
+    } catch (err) {
+        const error = err as AxiosError;
+        return rejectWithValue({
+            status: error.response?.status,
+            data: error.response?.data,
+        });
+    }
+});
+
+export const register = createAsyncThunk<
+    IUser,
+    { email: string; password: string; password2: string },
+    { rejectValue: AuthState['error'] }
+>('auth/register', async (body, { rejectWithValue }) => {
+    try {
+        const response = await axios.post(API_URL + 'user/register/', body);
+        return response.data;
+    } catch (err) {
+        const error = err as AxiosError;
+        return rejectWithValue({
+            status: error.response?.status,
+            data: error.response?.data,
+        });
+    }
+});
+
+export const checkAuth = createAsyncThunk<{ access: string }, string | null>(
+    'auth/checkAuth',
+    async (refreshToken, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(API_URL + 'user/token/refresh/', {
+                refresh: refreshToken,
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(err);
+        }
+    },
+);
 
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {
-        setAuth(state, action: PayloadAction<boolean>) {
-            state.isAuth = action.payload;
-        },
-        setUser(state, action: PayloadAction<IUser>) {
-            state.user = action.payload;
-        },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder.addCase(login.pending, (state) => {
+            state.loading = true;
+            state.error = undefined;
+        });
+        builder.addCase(login.fulfilled, (state) => {
+            state.isAuth = true;
+            state.error = undefined;
+            state.loading = false;
+        });
+        builder.addCase(login.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        builder.addCase(register.pending, (state) => {
+            state.loading = true;
+            state.error = undefined;
+        });
+        builder.addCase(register.fulfilled, (state) => {
+            state.loading = false;
+            state.error = undefined;
+        });
+        builder.addCase(register.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        builder.addCase(checkAuth.pending, (state) => {
+            state.loadingForBackdrop = true;
+            state.error = undefined;
+        });
+        builder.addCase(checkAuth.fulfilled, (state) => {
+            state.isAuth = true;
+            state.loadingForBackdrop = false;
+            state.error = undefined;
+        });
+        builder.addCase(checkAuth.rejected, (state) => {
+            state.isAuth = false;
+            state.loadingForBackdrop = false;
+            state.error = undefined;
+        });
     },
 });
 
 export const auth = (state: RootState) => state.auth;
-
-export const { setAuth } = authSlice.actions;
 
 export default authSlice.reducer;
