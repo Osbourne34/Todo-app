@@ -1,4 +1,4 @@
-export interface ITokens {
+export interface IAuthResponse {
     access: string;
     refresh: string;
 }
