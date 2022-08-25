@@ -1,16 +1,16 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { Login } from '../pages/Auth/Login';
-import { Register } from '../pages/Auth/Register';
-import { Main } from '../pages/Main';
+import { LoginPage } from '../pages/Auth/Login';
+import { RegisterPage } from '../pages/Auth/Register';
+import { MainPage } from '../pages/Main';
 
 export const AppRouter = () => {
     return (
         <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<MainPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
         </Routes>
     );
 };
