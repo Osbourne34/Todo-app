@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, Navigate } from 'react-router-dom';
+
+import { useAppSelector } from '../../hooks/redux';
+import { auth } from '../../store/reducers/authSlice/authSlice';
 
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
@@ -12,6 +15,16 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { LoginForm } from '../../components/LoginForm/LoginForm';
 
 export const Login = () => {
+    const { isAuth } = useAppSelector(auth);
+
+    if (localStorage.getItem('refreshToken') && !isAuth) {
+        return null;
+    }
+
+    if (isAuth) {
+        return <Navigate to="/" />;
+    }
+
     return (
         <Container maxWidth={'xs'}>
             <Avatar
