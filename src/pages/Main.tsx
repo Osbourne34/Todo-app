@@ -7,6 +7,10 @@ import { auth } from '../store/reducers/authSlice/authSlice';
 export const Main = () => {
     const { isAuth } = useAppSelector(auth);
 
+    if (localStorage.getItem('refreshToken') && !isAuth) {
+        return null;
+    }
+
     if (!isAuth) {
         return <Navigate to="/login" />;
     }

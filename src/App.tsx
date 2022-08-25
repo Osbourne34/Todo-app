@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -6,26 +6,35 @@ import { theme } from './theme';
 
 import { AppRouter } from './components/AppRouter';
 
-import { useAppDispatch, useAppSelector } from './hooks/redux';
-import { auth, checkAuth } from './store/reducers/authSlice/authSlice';
+import { useAppDispatch } from './hooks/redux';
 
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios';
+import { IAuthResponse } from './models/IAuthResponse';
+import { API_URL } from './constants/api';
+import { setAuth } from './store/reducers/authSlice/authSlice';
 
 export const App = () => {
-    const { loadingForBackdrop } = useAppSelector(auth);
     const dispatch = useAppDispatch();
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (localStorage.getItem('refreshToken')) {
-            dispatch(checkAuth(localStorage.getItem('refreshToken')))
-                .unwrap()
-                .then((res) => {
-                    localStorage.setItem('accessToken', res.access);
+            setLoading(true);
+            axios
+                .post<IAuthResponse>(API_URL + 'user/token/refresh/', {
+                    refresh: localStorage.getItem('refreshToken'),
                 })
-                .catch(() => {
+                .then((res) => {
+                    dispatch(setAuth(true));
+                    localStorage.setItem('accessToken', res.data.access);
+                })
+                .catch((e) => {
+                    dispatch(setAuth(false));
                     localStorage.clear();
-                });
+                })
+                .finally(() => setLoading(false));
         }
     }, [dispatch]);
 
@@ -38,7 +47,7 @@ export const App = () => {
                     color: '#fff',
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                 }}
-                open={loadingForBackdrop}
+                open={loading}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { API_URL } from '../../../constants/api';
 import { IAuthResponse } from '../../../models/IAuthResponse';
@@ -58,24 +58,14 @@ export const register = createAsyncThunk<
     }
 });
 
-export const checkAuth = createAsyncThunk<{ access: string }, string | null>(
-    'auth/checkAuth',
-    async (refreshToken, { rejectWithValue }) => {
-        try {
-            const response = await axios.post(API_URL + 'user/token/refresh/', {
-                refresh: refreshToken,
-            });
-            return response.data;
-        } catch (err) {
-            return rejectWithValue(err);
-        }
-    },
-);
-
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        setAuth: (state, action: PayloadAction<boolean>) => {
+            state.isAuth = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(login.pending, (state) => {
             state.loading = true;
@@ -102,23 +92,11 @@ const authSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         });
-        builder.addCase(checkAuth.pending, (state) => {
-            state.loadingForBackdrop = true;
-            state.error = undefined;
-        });
-        builder.addCase(checkAuth.fulfilled, (state) => {
-            state.isAuth = true;
-            state.loadingForBackdrop = false;
-            state.error = undefined;
-        });
-        builder.addCase(checkAuth.rejected, (state) => {
-            state.isAuth = false;
-            state.loadingForBackdrop = false;
-            state.error = undefined;
-        });
     },
 });
 
 export const auth = (state: RootState) => state.auth;
+
+export const { setAuth } = authSlice.actions;
 
 export default authSlice.reducer;
