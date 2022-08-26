@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from './theme';
+import axios from 'axios';
+import { API_URL } from './constants/api';
+import { IAuthResponse } from './models/IAuthResponse';
+
+import { useAppDispatch } from './hooks/redux';
+import { setAuth } from './store/reducers/authSlice/authSlice';
 
 import { AppRouter } from './components/AppRouter';
 
-import { useAppDispatch } from './hooks/redux';
-
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import axios from 'axios';
-import { IAuthResponse } from './models/IAuthResponse';
-import { API_URL } from './constants/api';
-import { setAuth } from './store/reducers/authSlice/authSlice';
 
 export const App = () => {
     const dispatch = useAppDispatch();
@@ -39,9 +36,7 @@ export const App = () => {
     }, [dispatch]);
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-
+        <>
             <Backdrop
                 sx={{
                     color: '#fff',
@@ -53,6 +48,6 @@ export const App = () => {
             </Backdrop>
 
             <AppRouter />
-        </ThemeProvider>
+        </>
     );
 };

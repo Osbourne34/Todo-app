@@ -2,6 +2,7 @@ import type { BaseQueryFn } from '@reduxjs/toolkit/query';
 import type { AxiosRequestConfig, AxiosError } from 'axios';
 import axios from 'axios';
 import { API_URL } from '../constants/api';
+import { IAuthResponse } from '../models/IAuthResponse';
 
 const $api = axios.create({
     baseURL: API_URL,
@@ -9,10 +10,40 @@ const $api = axios.create({
 
 $api.interceptors.request.use((config) => {
     if (config.headers === undefined) return {};
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem(
+        'accessToken',
+    )}`;
 
     return config;
 });
+
+$api.interceptors.response.use(
+    (config) => {
+        return config;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+        if (
+            error.response.status === 401 &&
+            error.config &&
+            !error.config._isRetry
+        ) {
+            originalRequest._isRetry = true;
+            try {
+                const response = await axios.post<IAuthResponse>(
+                    API_URL + 'user/token/refresh/',
+                    {
+                        refresh: localStorage.getItem('refreshToken'),
+                    },
+                );
+                localStorage.setItem('accessToken', response.data.access);
+                return $api.request(originalRequest);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    },
+);
 
 export const axiosBaseQuery =
     (): BaseQueryFn<
@@ -23,7 +54,7 @@ export const axiosBaseQuery =
             params?: AxiosRequestConfig['params'];
         },
         unknown,
-        { status: any; data: any }
+        unknown
     > =>
     async ({ url, method, data, params }) => {
         try {

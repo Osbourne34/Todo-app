@@ -10,7 +10,7 @@ import { formValidation } from '../../utils/valideForm';
 import { emailValidator, passwordValidator } from '../../utils/validate';
 
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
+import { Alert } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -26,7 +26,7 @@ export const LoginForm = () => {
         return formValidation(email.hasError, password.hasError);
     }, [email.hasError, password.hasError]);
 
-    const handleSubmit = async (e: SyntheticEvent) => {
+    const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
         dispatch(login({ email: email.value, password: password.value }))

@@ -1,0 +1,15 @@
+.active {
+    background-color: #ba68c8 !important;
+}
+.active:hover {
+    background-color: #af62bc !important;
+}
+.active p {
+    color: #fff;
+}
+.active button {
+    color: #fff;
+}
+.active .MuiPaper-root {
+    background-color: #fff;
+}
