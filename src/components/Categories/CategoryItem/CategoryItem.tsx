@@ -3,26 +3,22 @@ import React, { useRef } from 'react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
-interface CategoryItemProps {
-    link: string;
-    title: string;
-    amount: string;
-}
+import { ICategory } from '../../../models/ICategory';
 
-export const CategoryItem = ({ link, title, amount }: CategoryItemProps) => {
+export const CategoryItem = ({ id, name, get_incomplete_tasks }: ICategory) => {
     const ref = useRef(null);
 
     return (
         <Paper
             ref={ref}
             component={RouterNavLink}
-            to={link}
+            to={`/${id}`}
             onClick={(e: React.MouseEvent<HTMLElement>) => {
                 if (ref.current !== e.target) {
                     e.preventDefault();
@@ -45,14 +41,15 @@ export const CategoryItem = ({ link, title, amount }: CategoryItemProps) => {
                 },
             }}
         >
-            <Typography>{title}</Typography>
+            <Typography>{name}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <IconButton size="small" sx={{ mr: 1, display: 'none' }}>
                     <ModeEditRoundedIcon />
                 </IconButton>
+
                 <Paper sx={{ p: 1, bgcolor: 'grey.300' }}>
                     <Typography variant="body2" component="div">
-                        {amount}
+                        {get_incomplete_tasks}
                     </Typography>
                 </Paper>
             </Box>

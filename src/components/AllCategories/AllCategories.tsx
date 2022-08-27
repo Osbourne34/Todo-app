@@ -1,11 +1,15 @@
 import React from 'react';
 
+import { useGetIncompleteTasksQuery } from '../../store/api/tasksApi';
+
 import { NavLink as RouterNavLink } from 'react-router-dom';
 
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
-export const CategoryAll = () => {
+export const AllCategories = () => {
+    const { data } = useGetIncompleteTasksQuery('');
+
     return (
         <Paper
             component={RouterNavLink}
@@ -27,7 +31,7 @@ export const CategoryAll = () => {
             <Typography>Все</Typography>
             <Paper sx={{ p: 1, bgcolor: 'grey.300' }}>
                 <Typography variant="body2" component="div">
-                    15
+                    {data?.incomplete_count || '0'}
                 </Typography>
             </Paper>
         </Paper>

@@ -1,7 +1,10 @@
 import { ChangeEvent, useState } from 'react';
 
-export const useInput = (validate: (value: string) => boolean) => {
-    const [value, setValue] = useState<string>('');
+export const useInput = (
+    validate: (value: string) => boolean,
+    initialValue?: string,
+) => {
+    const [value, setValue] = useState<string>(initialValue || '');
     const [blur, setBlur] = useState<boolean>(false);
 
     const valueIsValid = validate(value);
@@ -16,5 +19,17 @@ export const useInput = (validate: (value: string) => boolean) => {
         setBlur(true);
     };
 
-    return { value, onChange, onBlur, hasError, displayedError };
+    const clear = (): void => {
+        setValue('');
+    };
+
+    return {
+        value,
+        onChange,
+        onBlur,
+        hasError,
+        displayedError,
+        clear,
+        setBlur,
+    };
 };
