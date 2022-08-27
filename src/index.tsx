@@ -12,6 +12,8 @@ import { theme } from './theme';
 
 import { App } from './App';
 
+import './fonts.css';
+
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 

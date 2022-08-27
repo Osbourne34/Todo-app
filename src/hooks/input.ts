@@ -31,5 +31,6 @@ export const useInput = (
         displayedError,
         clear,
         setBlur,
+        setValue,
     };
 };

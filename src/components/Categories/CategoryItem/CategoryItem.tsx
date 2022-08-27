@@ -5,15 +5,13 @@ import { NavLink as RouterNavLink } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 
-import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
+import { UpdateCategory } from '../../UpdateCategory/UpdateCategory';
 
 import { ICategory } from '../../../models/ICategory';
 
 export const CategoryItem = ({ id, name, get_incomplete_tasks }: ICategory) => {
     const ref = useRef(null);
-
     return (
         <Paper
             ref={ref}
@@ -43,9 +41,7 @@ export const CategoryItem = ({ id, name, get_incomplete_tasks }: ICategory) => {
         >
             <Typography>{name}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton size="small" sx={{ mr: 1, display: 'none' }}>
-                    <ModeEditRoundedIcon />
-                </IconButton>
+                <UpdateCategory id={id} name={name} />
 
                 <Paper sx={{ p: 1, bgcolor: 'grey.300' }}>
                     <Typography variant="body2" component="div">
