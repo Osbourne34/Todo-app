@@ -9,7 +9,7 @@ const initialState: searchState = {
     searchValue: '',
 };
 
-export const searchSlice = createSlice({
+const searchSlice = createSlice({
     name: 'search',
     initialState,
     reducers: {

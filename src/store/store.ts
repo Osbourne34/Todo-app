@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import AuthReducer from './reducers/authSlice/authSlice';
 import SearchReducer from './reducers/searchSlice/searchSlice';
+import UiReducer from './reducers/uiSlice/uiSlice';
 import { categoriesApi } from './api/categoriesApi';
 import { tasksApi } from './api/tasksApi';
 
@@ -9,6 +10,7 @@ export const store = configureStore({
     reducer: {
         auth: AuthReducer,
         search: SearchReducer,
+        ui: UiReducer,
         [categoriesApi.reducerPath]: categoriesApi.reducer,
         [tasksApi.reducerPath]: tasksApi.reducer,
     },

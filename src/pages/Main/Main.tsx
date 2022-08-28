@@ -5,17 +5,15 @@ import { protectedRoute } from '../../hoc/ProtectedRoute/ProtectedRoute';
 import Box from '@mui/material/Box';
 
 import { Sidebar } from '../../components/Sidebar/Sidebar';
+import { Header } from '../../components/Header/Header';
 
 const Main = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <Sidebar />
-            <Box>
-                <Box sx={{ position: 'absolute' }}>Header</Box>
-                <Box
-                    component="main"
-                    sx={{ height: 'calc(100vh)', pt: 10, overflowY: 'auto' }}
-                >
+            <Box sx={{ height: '100vh', overflowY: 'auto', p: 3 }}>
+                <Header />
+                <Box>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Voluptate quam, numquam eum inventore et in magnam id
                     nesciunt facere quasi ex sunt qui excepturi explicabo! A

@@ -2,6 +2,9 @@ import React from 'react';
 
 import './sidebar.css';
 
+import { useAppSelector } from '../../hooks/redux';
+import { ui } from '../../store/reducers/uiSlice/uiSlice';
+
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -13,14 +16,17 @@ import { AllCategories } from '../AllCategories/AllCategories';
 import { Categories } from '../Categories/Categories';
 
 export const Sidebar = () => {
+    const { isShowSidebar } = useAppSelector(ui);
+
     return (
         <Paper
+            className={isShowSidebar ? 'show' : ''}
             sx={{
                 width: '300px',
                 height: '100vh',
                 flexShrink: 0,
-                p: 2,
                 overflowY: 'auto',
+                transition: '.3s',
             }}
         >
             <Box
@@ -28,6 +34,7 @@ export const Sidebar = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    p: 2,
                 }}
             >
                 <Typography textAlign="center" variant="h6">
@@ -36,15 +43,19 @@ export const Sidebar = () => {
                 <AddCategory />
             </Box>
 
-            <Divider sx={{ my: 2 }} />
+            <Divider />
 
-            <CategorySearch />
+            <Box sx={{ p: 2 }}>
+                <CategorySearch />
 
-            <AllCategories />
+                <AllCategories />
+            </Box>
 
-            <Divider sx={{ my: 2 }} />
+            <Divider />
 
-            <Categories />
+            <Box sx={{ p: 2 }}>
+                <Categories />
+            </Box>
         </Paper>
     );
 };

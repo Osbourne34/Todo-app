@@ -13,3 +13,8 @@
 .active .MuiPaper-root {
     background-color: #fff;
 }
+
+.show {
+    width: 0 !important;
+    padding: 0 !important;
+}
