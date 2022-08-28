@@ -11,7 +11,7 @@ const Main = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <Sidebar />
-            <Box sx={{ height: '100vh', overflowY: 'auto', p: 3 }}>
+            <Box sx={{ height: '100vh', overflowY: 'auto', p: 3, bgcolor: 'grey.100' }}>
                 <Header />
                 <Box>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.

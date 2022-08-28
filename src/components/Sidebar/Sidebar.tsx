@@ -21,12 +21,14 @@ export const Sidebar = () => {
     return (
         <Paper
             className={isShowSidebar ? 'show' : ''}
+            elevation={10}
             sx={{
                 width: '300px',
                 height: '100vh',
                 flexShrink: 0,
                 overflowY: 'auto',
                 transition: '.3s',
+                zIndex: 1,
             }}
         >
             <Box

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { logout } from '../../store/reducers/authSlice/authSlice';
+
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -8,15 +10,25 @@ import Avatar from '@mui/material/Avatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
 import Logout from '@mui/icons-material/Logout';
+import { useAppDispatch } from '../../hooks/redux';
 
 export const AccountMenu = () => {
+    const dispatch = useAppDispatch();
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
+
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        localStorage.clear();
+        dispatch(logout(false));
     };
 
     return (
@@ -41,7 +53,7 @@ export const AccountMenu = () => {
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem>
+                <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
