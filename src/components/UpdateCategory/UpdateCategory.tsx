@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
+import { CategoryUpdateForm } from '../CategoryUpdateForm/CategoryUpdateForm';
+import { useDialog } from '../../hooks/dialog';
+
 import IconButton from '@mui/material/IconButton';
 
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
-
-import { CategoryUpdateForm } from '../CategoryUpdateForm/CategoryUpdateForm';
 
 interface UpdateCategoryProps {
     id: number;
@@ -12,15 +13,7 @@ interface UpdateCategoryProps {
 }
 
 export const UpdateCategory = ({ id, name }: UpdateCategoryProps) => {
-    const [open, setOpen] = useState<boolean>(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const { open, handleOpen, handleClose } = useDialog();
 
     return (
         <>

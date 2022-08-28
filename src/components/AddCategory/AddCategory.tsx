@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 
+import { CategotyAddingForm } from '../CategoryAddingForm/CategotyAddingForm';
+import { useDialog } from '../../hooks/dialog';
+
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 
 import IconButton from '@mui/material/IconButton';
 
-import { CategotyAddingForm } from '../CategoryAddingForm/CategotyAddingForm';
-
 export const AddCategory = () => {
-    const [open, setOpen] = useState<boolean>(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const { open, handleOpen, handleClose } = useDialog();
 
     return (
         <>

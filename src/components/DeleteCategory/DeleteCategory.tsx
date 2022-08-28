@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { useDeleteCategoryMutation } from '../../store/api/categoriesApi';
+import { useDialog } from '../../hooks/dialog';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -16,7 +17,7 @@ interface DeleteCategory {
 }
 
 export const DeleteCategory = ({ id, updateLoading }: DeleteCategory) => {
-    const [open, setOpen] = useState<boolean>(false);
+    const { open, handleOpen, handleClose } = useDialog();
 
     const [deleteCategory, { isLoading: deleteLoading }] =
         useDeleteCategoryMutation();
@@ -24,18 +25,14 @@ export const DeleteCategory = ({ id, updateLoading }: DeleteCategory) => {
     const handleDelete = () => {
         deleteCategory(id)
             .unwrap()
-            .then(() => setOpen(false));
-    };
-
-    const handleClose = () => {
-        setOpen(false);
+            .then(() => handleClose());
     };
 
     return (
         <>
             <Button
                 disabled={updateLoading}
-                onClick={() => setOpen(true)}
+                onClick={handleOpen}
                 variant="contained"
                 color="error"
             >
