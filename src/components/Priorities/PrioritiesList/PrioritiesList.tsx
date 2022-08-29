@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { useGetAllPriritiesQuery } from '../../../store/api/prioritiesApi';
+import { useGetAllPrioritiesQuery } from '../../../store/api/prioritiesApi';
 
 import Box from '@mui/material/Box';
 import { PrioritiesItem } from '../PrioritiesItem/PrioritiesItem';
 import { Loader } from '../../Loader/Loader';
 
 export const PrioritiesList = () => {
-    const { data, isLoading } = useGetAllPriritiesQuery('');
+    const { data, isLoading } = useGetAllPrioritiesQuery('');
 
     if (isLoading) {
         return <Loader />;

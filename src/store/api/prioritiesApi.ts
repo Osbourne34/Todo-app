@@ -7,7 +7,7 @@ export const prioritiesApi = createApi({
     baseQuery: axiosBaseQuery(),
     tagTypes: ['Priority'],
     endpoints: (build) => ({
-        getAllPririties: build.query<IPriority[], string>({
+        getAllPriorities: build.query<IPriority[], string>({
             query: () => ({
                 url: 'priorities/',
                 method: 'get',
@@ -47,7 +47,7 @@ export const prioritiesApi = createApi({
 });
 
 export const {
-    useGetAllPriritiesQuery,
+    useGetAllPrioritiesQuery,
     useCreatePriorityMutation,
     useUpdatePriorityMutation,
     useDeletePriorityMutation,
