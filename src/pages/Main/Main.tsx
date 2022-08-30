@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 import { protectedRoute } from '../../hoc/ProtectedRoute/ProtectedRoute';
 
@@ -6,7 +7,7 @@ import Box from '@mui/material/Box';
 
 import { Sidebar } from '../../components/Sidebar/Sidebar';
 import { Header } from '../../components/Header/Header';
-import { Tasks } from '../../components/Tasks/Tasks';
+import { AddTask } from '../../components/Tasks/AddTask/AddTask';
 
 const Main = () => {
     return (
@@ -22,7 +23,8 @@ const Main = () => {
                 }}
             >
                 <Header />
-                <Tasks />
+                <AddTask />
+                <Outlet />
             </Box>
         </Box>
     );

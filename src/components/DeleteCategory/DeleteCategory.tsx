@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { useDeleteCategoryMutation } from '../../store/api/categoriesApi';
 import { useDialog } from '../../hooks/dialog';

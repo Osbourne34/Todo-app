@@ -19,8 +19,7 @@ export const AddPriority = () => {
     const namePriority = useInput(emptyValidator);
     const { open, handleOpen, handleClose } = useDialog();
 
-    const [createPriority, { isLoading, isError }] =
-        useCreatePriorityMutation();
+    const [createPriority, { isLoading }] = useCreatePriorityMutation();
 
     const clear = () => {
         namePriority.clear();

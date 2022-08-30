@@ -17,11 +17,6 @@ export const CategoryItem = ({ id, name, get_incomplete_tasks }: ICategory) => {
             ref={ref}
             component={RouterNavLink}
             to={`/${id}`}
-            onClick={(e: React.MouseEvent<HTMLElement>) => {
-                if (ref.current !== e.target) {
-                    e.preventDefault();
-                }
-            }}
             sx={{
                 display: 'flex',
                 alignItems: 'center',

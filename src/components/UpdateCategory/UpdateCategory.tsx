@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { CategoryUpdateForm } from '../CategoryUpdateForm/CategoryUpdateForm';
 import { useDialog } from '../../hooks/dialog';

@@ -1,4 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/dist/query/react';
+import { ITask } from '../../models/ITask';
 import { axiosBaseQuery } from './../customRequest';
 
 export const tasksApi = createApi({
@@ -13,7 +14,14 @@ export const tasksApi = createApi({
             }),
             providesTags: ['Tasks'],
         }),
+        createTask: build.mutation<ITask, ITask>({
+            query: (body) => ({
+                url: 'tasks/',
+                method: 'post',
+                data: body,
+            }),
+        }),
     }),
 });
 
-export const { useGetIncompleteTasksQuery } = tasksApi;
+export const { useGetIncompleteTasksQuery, useCreateTaskMutation } = tasksApi;
