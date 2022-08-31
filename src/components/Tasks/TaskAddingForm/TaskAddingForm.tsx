@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import dayjs, { Dayjs } from 'dayjs';
 
+import { useLazyGetAllCategoriesQuery } from '../../../store/api/categoriesApi';
+
 import { useCreateTaskMutation } from '../../../store/api/tasksApi';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -50,6 +52,7 @@ const TaskAddingForm = ({ open, onClose }: TaskAddingFormProps) => {
     };
 
     const [createTask, { isLoading }] = useCreateTaskMutation();
+    const [getAllCategories] = useLazyGetAllCategoriesQuery();
 
     if (typeof dueDateTask?.format('YYYY-MM-DD') === 'string') {
         if (
@@ -72,6 +75,7 @@ const TaskAddingForm = ({ open, onClose }: TaskAddingFormProps) => {
             .unwrap()
             .then(() => {
                 clear();
+                getAllCategories('');
             });
     };
 

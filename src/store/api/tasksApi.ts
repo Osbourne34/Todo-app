@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/dist/query/react';
-import { ITask } from '../../models/ITask';
+import { ITask, ITask2 } from '../../models/ITask';
 import { axiosBaseQuery } from './../customRequest';
 
 export const tasksApi = createApi({
@@ -14,14 +14,26 @@ export const tasksApi = createApi({
             }),
             providesTags: ['Tasks'],
         }),
+        getTasksByCategory: build.query<ITask2[], string | undefined>({
+            query: (category) => ({
+                url: `tasks/?category=${category ? category : ''}`,
+                method: 'get',
+            }),
+            providesTags: ['Tasks'],
+        }),
         createTask: build.mutation<ITask, ITask>({
             query: (body) => ({
                 url: 'tasks/',
                 method: 'post',
                 data: body,
             }),
+            invalidatesTags: ['Tasks'],
         }),
     }),
 });
 
-export const { useGetIncompleteTasksQuery, useCreateTaskMutation } = tasksApi;
+export const {
+    useGetIncompleteTasksQuery,
+    useGetTasksByCategoryQuery,
+    useCreateTaskMutation,
+} = tasksApi;

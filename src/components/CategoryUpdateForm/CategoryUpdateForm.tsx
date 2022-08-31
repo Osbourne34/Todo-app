@@ -46,7 +46,10 @@ export const CategoryUpdateForm = ({
     };
 
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog
+            open={open}
+            onClose={handleClose}
+        >
             <DialogTitle>Редактирование категорий</DialogTitle>
             <DialogContent>
                 {updateError && (

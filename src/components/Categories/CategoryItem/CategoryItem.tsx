@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
-import { NavLink as RouterNavLink } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -11,12 +11,16 @@ import { UpdateCategory } from '../../UpdateCategory/UpdateCategory';
 import { ICategory } from '../../../models/ICategory';
 
 export const CategoryItem = ({ id, name, get_incomplete_tasks }: ICategory) => {
-    const ref = useRef(null);
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
+
     return (
         <Paper
-            ref={ref}
-            component={RouterNavLink}
-            to={`/${id}`}
+            className={pathname === `/${id}` ? 'active' : ''}
+            onClick={() => {
+                navigate(`${id}`);
+                console.log('click');
+            }}
             sx={{
                 display: 'flex',
                 alignItems: 'center',

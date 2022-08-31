@@ -18,7 +18,10 @@ export const UpdateCategory = ({ id, name }: UpdateCategoryProps) => {
     return (
         <>
             <IconButton
-                onClick={handleOpen}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpen();
+                }}
                 size="small"
                 sx={{ mr: 1, display: 'none' }}
             >
