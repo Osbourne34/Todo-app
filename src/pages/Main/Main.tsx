@@ -4,10 +4,14 @@ import { Outlet } from 'react-router-dom';
 import { protectedRoute } from '../../hoc/ProtectedRoute/ProtectedRoute';
 
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
 import { Sidebar } from '../../components/Sidebar/Sidebar';
 import { Header } from '../../components/Header/Header';
-import { AddTask } from '../../components/Tasks/AddTask/AddTask';
+import { AddTask } from '../../components/AddTask/AddTask';
+
+import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
 const Main = () => {
     return (
@@ -23,8 +27,24 @@ const Main = () => {
                 }}
             >
                 <Header />
-                {/* <AddTask /> */}
-                {/* <Outlet /> */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        mb: 4,
+                    }}
+                >
+                    <Box sx={{ display: 'flex' }}>
+                        <Typography variant="h4">Категория</Typography>
+
+                        <IconButton>
+                            <ModeEditRoundedIcon />
+                        </IconButton>
+                    </Box>
+                    <AddTask />
+                </Box>
+                <Outlet />
             </Box>
         </Box>
     );

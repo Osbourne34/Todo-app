@@ -31,7 +31,8 @@ export const ConfirmDialog = ({
             <DialogContent>
                 <DialogContentText>
                     {title}
-                    <br />({subtitle})
+                    <br />
+                    {subtitle && subtitle}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
