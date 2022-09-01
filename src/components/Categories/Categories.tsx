@@ -1,17 +1,33 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, MouseEvent, useState } from 'react';
 
-import { useGetAllCategoriesQuery } from '../../store/api/categoriesApi';
-import { useAppSelector } from '../../hooks/redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import {
+    useGetAllCategoriesQuery,
+    useDeleteCategoryMutation,
+} from '../../store/api/categoriesApi';
 import { search } from '../../store/reducers/searchSlice/searchSlice';
+import { useAppSelector } from '../../hooks/redux';
 
 import Typography from '@mui/material/Typography';
 
-import { CategoryItem } from './CategoryItem/CategoryItem';
+import { Category } from '../Category/Category';
 import { Loader } from '../Loader/Loader';
+import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 
 export const Categories = () => {
     const { searchValue } = useAppSelector(search);
-    const { data: categories, isLoading, error } = useGetAllCategoriesQuery('');
+    const [idToRemove, setIdToDelete] = useState<number | string>(0);
+    const {
+        data: categories,
+        isLoading: categoriesLoading,
+        isError,
+    } = useGetAllCategoriesQuery('');
+    const [deleteCategory, { isLoading: deteleCategoryLoading }] =
+        useDeleteCategoryMutation();
+
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
 
     const categoriesFound = useMemo(
         () =>
@@ -26,11 +42,34 @@ export const Categories = () => {
         [categories, searchValue],
     );
 
-    if (isLoading) {
+    const handleDelete = (
+        e: MouseEvent<HTMLButtonElement>,
+        { id }: { id: number | string },
+    ) => {
+        e.stopPropagation();
+        setIdToDelete(id);
+    };
+
+    const handleDeletionConfirmation = () => {
+        deleteCategory(idToRemove)
+            .unwrap()
+            .then(() => {
+                if (idToRemove == pathname.slice(1)) {
+                    navigate('/');
+                }
+                setIdToDelete(0);
+            });
+    };
+
+    const handleClose = () => {
+        setIdToDelete(0);
+    };
+
+    if (categoriesLoading) {
         return <Loader />;
     }
 
-    if (error) {
+    if (isError) {
         return <Typography>Ошибка при загрузке данных</Typography>;
     }
 
@@ -39,14 +78,25 @@ export const Categories = () => {
             {categoriesFound &&
                 categoriesFound.map(({ id, name, get_incomplete_tasks }) => {
                     return (
-                        <CategoryItem
+                        <Category
                             key={id}
-                            id={id}
+                            link={id}
                             name={name}
-                            get_incomplete_tasks={get_incomplete_tasks}
+                            incompleteTasks={get_incomplete_tasks}
+                            removable={true}
+                            onDelete={handleDelete}
                         />
                     );
                 })}
+
+            <ConfirmDialog
+                open={idToRemove !== 0}
+                onClose={handleClose}
+                confirmation={handleDeletionConfirmation}
+                title="Вы действительно хотите удалить категорию?"
+                subtitle="сами задачи не удаляются"
+                loading={deteleCategoryLoading}
+            />
         </>
     );
 };

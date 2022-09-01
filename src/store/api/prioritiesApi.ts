@@ -25,13 +25,24 @@ export const prioritiesApi = createApi({
             }),
             invalidatesTags: ['Priority'],
         }),
-        updatePriority: build.mutation<
+        updatePriorityColor: build.mutation<
             IPriority,
-            { id: number; body: { name: string; color: string } }
+            { id: number; body: { color: string } }
         >({
             query: ({ id, body }) => ({
                 url: `priorities/${id}/`,
-                method: 'put',
+                method: 'patch',
+                data: body,
+            }),
+            invalidatesTags: ['Priority'],
+        }),
+        updatePriorityName: build.mutation<
+            IPriority,
+            { id: number; body: { name: string } }
+        >({
+            query: ({ id, body }) => ({
+                url: `priorities/${id}/`,
+                method: 'patch',
                 data: body,
             }),
             invalidatesTags: ['Priority'],
@@ -49,6 +60,7 @@ export const prioritiesApi = createApi({
 export const {
     useGetAllPrioritiesQuery,
     useCreatePriorityMutation,
-    useUpdatePriorityMutation,
+    useUpdatePriorityColorMutation,
+    useUpdatePriorityNameMutation,
     useDeletePriorityMutation,
 } = prioritiesApi;

@@ -19,18 +19,11 @@ export const useInput = (
         setBlur(true);
     };
 
-    const clear = (): void => {
-        setValue('');
-    };
-
     return {
         value,
         onChange,
         onBlur,
         hasError,
         displayedError,
-        clear,
-        setBlur,
-        setValue,
     };
 };

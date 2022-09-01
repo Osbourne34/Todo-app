@@ -1,5 +1,5 @@
 export interface ICategory {
-    name: string;
     id: number;
+    name: string;
     get_incomplete_tasks: number;
 }

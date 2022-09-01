@@ -8,8 +8,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+
 import { AccountMenu } from '../AccountMenu/AccountMenu';
-import { Priorities } from '../Priorities/Priorities';
+import { SettingPriorities } from '../SettingPriorities/SettingPriorities';
 
 export const Header = () => {
     const dispatch = useAppDispatch();
@@ -30,7 +31,7 @@ export const Header = () => {
                 <Button sx={{ ml: 2 }}>Скрыть статистику</Button>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Priorities />
+                <SettingPriorities />
                 <AccountMenu />
             </Box>
         </Box>

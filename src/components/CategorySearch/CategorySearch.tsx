@@ -18,6 +18,7 @@ export const CategorySearch = () => {
             fullWidth
             variant="standard"
             label="Поиск категорий"
+            sx={{ mb: 2 }}
         />
     );
 };

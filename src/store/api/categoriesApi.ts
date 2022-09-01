@@ -5,7 +5,7 @@ import { axiosBaseQuery } from './../customRequest';
 export const categoriesApi = createApi({
     reducerPath: 'categoriesApi',
     baseQuery: axiosBaseQuery(),
-    tagTypes: ['Category', 'Tasks'],
+    tagTypes: ['Category'],
     endpoints: (build) => ({
         getAllCategories: build.query<ICategory[], string>({
             query: () => ({
@@ -33,7 +33,7 @@ export const categoriesApi = createApi({
             },
         ),
         deleteCategory: build.mutation({
-            query: (id: number) => ({
+            query: (id: number | string) => ({
                 url: `categories/${id}/`,
                 method: 'delete',
             }),

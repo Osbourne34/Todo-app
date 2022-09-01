@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useAppDispatch } from '../../hooks/redux';
 import { logout } from '../../store/reducers/authSlice/authSlice';
 
 import Box from '@mui/material/Box';
@@ -10,7 +11,6 @@ import Avatar from '@mui/material/Avatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
 import Logout from '@mui/icons-material/Logout';
-import { useAppDispatch } from '../../hooks/redux';
 
 export const AccountMenu = () => {
     const dispatch = useAppDispatch();

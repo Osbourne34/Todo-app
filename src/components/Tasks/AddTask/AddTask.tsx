@@ -1,23 +1,35 @@
 import React from 'react';
 
-import { Button } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useDialog } from '../../../hooks/dialog';
-import TaskAddingForm from '../TaskAddingForm/TaskAddingForm';
+
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
 export const AddTask = () => {
     const { open, handleOpen, handleClose } = useDialog();
 
     return (
         <>
-            <Button
-                onClick={() => handleOpen()}
-                sx={{ mb: 4 }}
-                variant="contained"
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    mb: 4,
+                }}
             >
-                Добавить
-            </Button>
+                <Box sx={{ display: 'flex' }}>
+                    <Typography variant="h4">Категория</Typography>
 
-            <TaskAddingForm open={open} onClose={handleClose} />
+                    <IconButton>
+                        <ModeEditRoundedIcon />
+                    </IconButton>
+                </Box>
+                <Button onClick={() => handleOpen()} variant="contained">
+                    Добавить
+                </Button>
+            </Box>
         </>
     );
 };

@@ -10,7 +10,7 @@ import { formValidation } from '../../utils/valideForm';
 import { emailValidator, passwordValidator } from '../../utils/validate';
 
 import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -29,7 +29,12 @@ export const LoginForm = () => {
     const handleSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        dispatch(login({ email: email.value, password: password.value }))
+        dispatch(
+            login({
+                email: email.value.toLowerCase(),
+                password: password.value,
+            }),
+        )
             .unwrap()
             .then((res) => {
                 localStorage.setItem('accessToken', res.access);

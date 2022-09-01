@@ -12,7 +12,7 @@ import Divider from '@mui/material/Divider';
 
 import { AddCategory } from '../AddCategory/AddCategory';
 import { CategorySearch } from '../CategorySearch/CategorySearch';
-import { AllCategories } from '../AllCategories/AllCategories';
+import { Category } from '../Category/Category';
 import { Categories } from '../Categories/Categories';
 
 export const Sidebar = () => {
@@ -39,9 +39,7 @@ export const Sidebar = () => {
                     p: 2,
                 }}
             >
-                <Typography textAlign="center" variant="h6">
-                    Категорий
-                </Typography>
+                <Typography variant="h6">Категорий</Typography>
                 <AddCategory />
             </Box>
 
@@ -49,8 +47,12 @@ export const Sidebar = () => {
 
             <Box sx={{ p: 2 }}>
                 <CategorySearch />
-
-                <AllCategories />
+                <Category
+                    link="/"
+                    name="Все"
+                    incompleteTasks={0}
+                    removable={false}
+                />
             </Box>
 
             <Divider />

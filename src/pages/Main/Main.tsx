@@ -23,8 +23,8 @@ const Main = () => {
                 }}
             >
                 <Header />
-                <AddTask />
-                <Outlet />
+                {/* <AddTask /> */}
+                {/* <Outlet /> */}
             </Box>
         </Box>
     );

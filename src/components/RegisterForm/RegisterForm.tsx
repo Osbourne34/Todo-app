@@ -40,7 +40,7 @@ export const RegisterForm = () => {
 
         dispatch(
             register({
-                email: email.value,
+                email: email.value.toLowerCase(),
                 password: password.value,
                 password2,
             }),

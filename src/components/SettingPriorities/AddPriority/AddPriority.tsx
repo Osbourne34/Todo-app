@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 
-import { useCreateCategoryMutation } from '../../store/api/categoriesApi';
+import { useCreatePriorityMutation } from '../../../store/api/prioritiesApi';
 
+import Link from '@mui/material/Link';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
 
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
+import { MainForm } from '../../MainForm/MainForm';
 
-import { MainForm } from '../MainForm/MainForm';
-
-export const AddCategory = () => {
+export const AddPriority = () => {
     const [open, setOpen] = useState<boolean>(false);
-    const [createCategory, { isLoading, isError }] =
-        useCreateCategoryMutation();
+    const [createPriority, { isLoading, isError }] =
+        useCreatePriorityMutation();
 
     const handleSubmit = (name: string) => {
-        createCategory({ name })
+        createPriority({ name, color: '#ffffff' })
             .unwrap()
             .then(() => {
                 handleClose();
@@ -30,12 +28,16 @@ export const AddCategory = () => {
 
     return (
         <>
-            <IconButton onClick={() => setOpen(true)}>
-                <AddRoundedIcon />
-            </IconButton>
+            <Link
+                onClick={() => setOpen(true)}
+                variant="body1"
+                component="button"
+            >
+                Добавить приоритет
+            </Link>
 
             <Dialog open={open} onClose={handleClose} fullWidth>
-                <DialogTitle>Добавление категорий</DialogTitle>
+                <DialogTitle>Добавление приоритета</DialogTitle>
                 <DialogContent>
                     <MainForm
                         onSubmit={handleSubmit}
