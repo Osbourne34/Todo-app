@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     useGetAllPrioritiesQuery,
     useDeletePriorityMutation,
-    useUpdatePriorityNameMutation,
+    useUpdatePriorityMutation,
 } from '../../../store/api/prioritiesApi';
 
 import Dialog from '@mui/material/Dialog';
@@ -24,8 +24,8 @@ export const Priorities = () => {
     const [idToRemove, setIdToDelete] = useState<number>(0);
     const { data: priorities, isLoading: loadingPriorities } =
         useGetAllPrioritiesQuery('');
-    const [updatePriorityName, { isLoading: loadingUpdate, isError }] =
-        useUpdatePriorityNameMutation();
+    const [updatePriority, { isLoading: loadingUpdate, isError }] =
+        useUpdatePriorityMutation();
     const [deletePriority, { isLoading: loadingDeletion }] =
         useDeletePriorityMutation();
 
@@ -38,7 +38,7 @@ export const Priorities = () => {
     };
 
     const handleUpdateSubmit = (name: string) => {
-        updatePriorityName({ id: idAndValueToUpdate.id, body: { name } })
+        updatePriority({ id: idAndValueToUpdate.id, body: { name } })
             .unwrap()
             .then(() => {
                 setIdAndValueToUpdate({ id: 0, name: '' });

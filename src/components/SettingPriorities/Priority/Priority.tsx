@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useUpdatePriorityColorMutation } from '../../../store/api/prioritiesApi';
+import { useUpdatePriorityMutation } from '../../../store/api/prioritiesApi';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -20,10 +20,10 @@ interface PriorityProps {
 export const Priority = React.memo(
     ({ name, color, id, onDelete, onUpdate }: PriorityProps) => {
         const [selectedColor, setSelectedColor] = useState<string>(color);
-        const [updatePriorityColor] = useUpdatePriorityColorMutation();
+        const [updatePriority] = useUpdatePriorityMutation();
 
         const handleUpdateColor = () => {
-            updatePriorityColor({
+            updatePriority({
                 id,
                 body: { color: selectedColor },
             }).unwrap();

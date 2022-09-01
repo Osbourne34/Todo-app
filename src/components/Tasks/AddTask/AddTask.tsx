@@ -1,14 +1,11 @@
 import React from 'react';
 
 import { Box, Button, IconButton, Typography } from '@mui/material';
-import { useDialog } from '../../../hooks/dialog';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
 export const AddTask = () => {
-    const { open, handleOpen, handleClose } = useDialog();
-
     return (
         <>
             <Box
@@ -26,7 +23,7 @@ export const AddTask = () => {
                         <ModeEditRoundedIcon />
                     </IconButton>
                 </Box>
-                <Button onClick={() => handleOpen()} variant="contained">
+                <Button onClick={() => console.log('yes')} variant="contained">
                     Добавить
                 </Button>
             </Box>
