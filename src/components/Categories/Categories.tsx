@@ -6,6 +6,7 @@ import {
     useGetAllCategoriesQuery,
     useDeleteCategoryMutation,
 } from '../../store/api/categoriesApi';
+
 import { search } from '../../store/reducers/searchSlice/searchSlice';
 import { useAppSelector } from '../../hooks/redux';
 

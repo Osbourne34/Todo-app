@@ -13,29 +13,76 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import { Loader } from '../Loader/Loader';
 import { TaskItem } from '../TaskItem/TaskItem';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
+import { TaskForm } from '../TaskForm/TaskForm';
 
 export const TasksTable = () => {
     const [idToRemove, setIdToDelete] = useState<number>(0);
+    const [idToUpdateAndBody, setIdToUpdateAnyBody] = useState<{
+        id: number;
+        body: {
+            name: string;
+            category: number | null;
+            priority: number | null;
+            due_date: string;
+        };
+    }>({ id: 0, body: { name: '', category: 0, priority: 0, due_date: '' } });
 
     const { id } = useParams();
     const { data: tasks, isLoading } = useGetTasksByCategoryQuery(id);
     const [deleteTask, { isLoading: deleteTaskLoading }] =
         useDeleteTaskMutation();
 
+    const handleUpdate = (
+        id: number,
+        {
+            name,
+            category,
+            priority,
+            due_date,
+        }: {
+            name: string;
+            category: number | null;
+            priority: number | null;
+            due_date: string;
+        },
+    ) => {
+        setIdToUpdateAnyBody({
+            id,
+            body: { name, category, priority, due_date },
+        });
+    };
+
     const handleDelete = (id: number) => {
         setIdToDelete(id);
+    };
+
+    const handleUpdateSubmit = (
+        name: string,
+        category: number | null,
+        priority: number | null,
+        dueDate: string | undefined,
+    ) => {
+        console.log(name, category, priority, dueDate);
     };
 
     const handleDeletionConfirmation = () => {
         deleteTask(idToRemove)
             .unwrap()
             .then(() => handleCloseConfirm());
+    };
+
+    const handleCloseForm = () => {
+        setIdToUpdateAnyBody({
+            id: 0,
+            body: { name: '', category: 0, priority: 0, due_date: '' },
+        });
     };
 
     const handleCloseConfirm = () => {
@@ -77,6 +124,7 @@ export const TasksTable = () => {
                                 <TaskItem
                                     key={task.id}
                                     index={index}
+                                    onUpdate={handleUpdate}
                                     onDelete={handleDelete}
                                     {...task}
                                 />
@@ -89,6 +137,16 @@ export const TasksTable = () => {
                     <Typography variant="h6">Задачи отсутствуют</Typography>
                 </Paper>
             )}
+
+            <Dialog open={idToUpdateAndBody.id !== 0} onClose={handleCloseForm}>
+                <TaskForm
+                    onSubmit={handleUpdateSubmit}
+                    onClose={handleCloseForm}
+                    loading={false}
+                    error={false}
+                    {...idToUpdateAndBody.body}
+                />
+            </Dialog>
 
             <ConfirmDialog
                 open={idToRemove !== 0}

@@ -22,6 +22,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Alert from '@mui/material/Alert';
 
 interface TaskFormProps {
     title?: string;
@@ -31,149 +32,195 @@ interface TaskFormProps {
         priority: number | null,
         dueDate: string | undefined,
     ) => void;
+    onClose: () => void;
+    loading: boolean;
+    error: boolean;
+    name?: string;
+    category?: number | null;
+    priority?: number | null;
+    due_date?: string | undefined;
 }
 
-export const TaskForm = React.memo(({ onSubmit }: TaskFormProps) => {
-    const name = useInput(emptyValidator);
-    const [category, setCategory] = useState<number>(0);
-    const [priority, setPriority] = useState<number>(0);
-    const [dueDate, setDueDate] = useState<Dayjs | null>(dayjs());
-
-    const categories =
-        categoriesApi.endpoints.getAllCategories.useQueryState('').data;
-    const { data: priorities } = useGetAllPrioritiesQuery('');
-
-    let isValidDate: boolean = false;
-
-    if (typeof dueDate?.format('YYYY-MM-DD') === 'string') {
-        if (
-            Date.parse(dueDate.format('YYYY-MM-DD')) >=
-            Date.parse(dayjs().format('YYYY-MM-DD'))
-        ) {
-            isValidDate = true;
-        } else {
-            isValidDate = false;
-        }
-    }
-
-    const handleSubmit = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-        onSubmit(
-            name.value,
-            category ? category : null,
-            priority ? priority : null,
-            dueDate?.format('YYYY-MM-DD'),
+export const TaskForm = React.memo(
+    ({
+        onSubmit,
+        onClose,
+        loading,
+        error,
+        name,
+        category,
+        priority,
+        due_date,
+    }: TaskFormProps) => {
+        const nameTask = useInput(emptyValidator, name || '');
+        const [categoryTask, setCategoryTask] = useState<number>(category || 0);
+        const [priorityTask, setPriorityTask] = useState<number>(priority || 0);
+        const [dueDateTask, setDueDateTask] = useState<Dayjs | null>(
+            dayjs(due_date),
         );
-    };
 
-    return (
-        <>
-            <DialogTitle>Добавление задачи</DialogTitle>
-            <DialogContent>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        value={name.value}
-                        onChange={name.onChange}
-                        onBlur={name.onBlur}
-                        error={name.displayedError}
-                        helperText={
-                            name.displayedError &&
-                            'Название задачи должно содержать минимум 3 и максимум 25 символов'
-                        }
-                        variant="standard"
-                        label="Название задачи"
-                        fullWidth
-                        required
-                        autoFocus
-                    />
+        const categories =
+            categoriesApi.endpoints.getAllCategories.useQueryState('').data;
+        const { data: priorities } = useGetAllPrioritiesQuery('');
 
-                    <FormControl variant="standard" fullWidth sx={{ my: 2 }}>
-                        <InputLabel>Укажите категорию</InputLabel>
-                        <Select
-                            value={category}
-                            onChange={(e: SelectChangeEvent<number>) =>
-                                setCategory(+e.target.value)
+        let isValidDate: boolean = false;
+
+        if (typeof dueDateTask?.format('YYYY-MM-DD') === 'string') {
+            if (
+                Date.parse(dueDateTask.format('YYYY-MM-DD')) >=
+                Date.parse(dayjs().format('YYYY-MM-DD'))
+            ) {
+                isValidDate = true;
+            } else {
+                isValidDate = false;
+            }
+        }
+
+        const handleSubmit = (e: React.SyntheticEvent) => {
+            e.preventDefault();
+            onSubmit(
+                nameTask.value,
+                categoryTask ? categoryTask : null,
+                priorityTask ? priorityTask : null,
+                dueDateTask?.format('YYYY-MM-DD'),
+            );
+        };
+
+        return (
+            <>
+                <DialogTitle>Добавление задачи</DialogTitle>
+                <DialogContent>
+                    <form onSubmit={handleSubmit}>
+                        {error && (
+                            <Alert
+                                variant="filled"
+                                severity="error"
+                                sx={{ mb: 2 }}
+                            >
+                                Произошла ошибка, попробуйте ещё раз
+                            </Alert>
+                        )}
+
+                        <TextField
+                            value={nameTask.value}
+                            onChange={nameTask.onChange}
+                            onBlur={nameTask.onBlur}
+                            error={nameTask.displayedError}
+                            helperText={
+                                nameTask.displayedError &&
+                                'Название задачи должно содержать минимум 3 и максимум 25 символов'
                             }
-                            label="Укажите категорию"
-                        >
-                            <MenuItem value={0}>Без категорий</MenuItem>
-
-                            {categories &&
-                                categories.map((category) => (
-                                    <MenuItem
-                                        key={category.id}
-                                        value={category.id}
-                                    >
-                                        {category.name}
-                                    </MenuItem>
-                                ))}
-                        </Select>
-                    </FormControl>
-
-                    <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
-                        <InputLabel>Укажите приоритет</InputLabel>
-                        <Select
-                            value={priority}
-                            onChange={(e: SelectChangeEvent<number>) =>
-                                setPriority(+e.target.value)
-                            }
-                            label="Укажите приоритет"
-                        >
-                            <MenuItem value={0}>Без приоритета</MenuItem>
-                            {priorities &&
-                                priorities.map((priority) => (
-                                    <MenuItem
-                                        key={priority.id}
-                                        value={priority.id}
-                                    >
-                                        {priority.name}
-                                    </MenuItem>
-                                ))}
-                        </Select>
-                    </FormControl>
-
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DesktopDatePicker
-                            value={dueDate}
-                            onChange={(date: Dayjs | null) => setDueDate(date)}
-                            label="Срок"
-                            inputFormat="YYYY/MM/DD"
-                            renderInput={(params) => (
-                                <TextField
-                                    variant="standard"
-                                    fullWidth
-                                    required
-                                    {...params}
-                                    error={!isValidDate}
-                                    helperText={
-                                        !isValidDate &&
-                                        'Дата не должна быть меньше сегодняшней'
-                                    }
-                                />
-                            )}
+                            variant="standard"
+                            label="Название задачи"
+                            fullWidth
+                            required
+                            autoFocus
                         />
-                    </LocalizationProvider>
 
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            mt: 4,
-                        }}
-                    >
-                        <Button variant="outlined" sx={{ mr: 2 }}>
-                            Отмена
-                        </Button>
-                        <LoadingButton
-                            disabled={name.hasError || !isValidDate}
-                            type="submit"
-                            variant="contained"
+                        <FormControl
+                            variant="standard"
+                            fullWidth
+                            sx={{ my: 2 }}
                         >
-                            Сохранить
-                        </LoadingButton>
-                    </Box>
-                </form>
-            </DialogContent>
-        </>
-    );
-});
+                            <InputLabel>Укажите категорию</InputLabel>
+                            <Select
+                                value={categoryTask}
+                                onChange={(e: SelectChangeEvent<number>) =>
+                                    setCategoryTask(+e.target.value)
+                                }
+                                label="Укажите категорию"
+                            >
+                                <MenuItem value={0}>Без категорий</MenuItem>
+
+                                {categories &&
+                                    categories.map((category) => (
+                                        <MenuItem
+                                            key={category.id}
+                                            value={category.id}
+                                        >
+                                            {category.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+
+                        <FormControl
+                            variant="standard"
+                            fullWidth
+                            sx={{ mb: 2 }}
+                        >
+                            <InputLabel>Укажите приоритет</InputLabel>
+                            <Select
+                                value={priorityTask}
+                                onChange={(e: SelectChangeEvent<number>) =>
+                                    setPriorityTask(+e.target.value)
+                                }
+                                label="Укажите приоритет"
+                            >
+                                <MenuItem value={0}>Без приоритета</MenuItem>
+                                {priorities &&
+                                    priorities.map((priority) => (
+                                        <MenuItem
+                                            key={priority.id}
+                                            value={priority.id}
+                                        >
+                                            {priority.name}
+                                        </MenuItem>
+                                    ))}
+                            </Select>
+                        </FormControl>
+
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DesktopDatePicker
+                                value={dueDateTask}
+                                onChange={(date: Dayjs | null) =>
+                                    setDueDateTask(date)
+                                }
+                                label="Срок"
+                                inputFormat="YYYY/MM/DD"
+                                renderInput={(params) => (
+                                    <TextField
+                                        variant="standard"
+                                        fullWidth
+                                        required
+                                        {...params}
+                                        error={!isValidDate}
+                                        helperText={
+                                            !isValidDate &&
+                                            'Дата не должна быть меньше сегодняшней'
+                                        }
+                                    />
+                                )}
+                            />
+                        </LocalizationProvider>
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                mt: 4,
+                            }}
+                        >
+                            <Button
+                                onClick={onClose}
+                                disabled={loading}
+                                variant="outlined"
+                                sx={{ mr: 2 }}
+                            >
+                                Отмена
+                            </Button>
+                            <LoadingButton
+                                disabled={nameTask.hasError || !isValidDate}
+                                loading={loading}
+                                type="submit"
+                                variant="contained"
+                            >
+                                Сохранить
+                            </LoadingButton>
+                        </Box>
+                    </form>
+                </DialogContent>
+            </>
+        );
+    },
+);

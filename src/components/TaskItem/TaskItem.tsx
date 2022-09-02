@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ITask } from '../../models/ITask';
 
+import { useUpdateTaskMutation } from '../../store/api/tasksApi';
 import { useGetAllCategoriesQuery } from '../../store/api/categoriesApi';
 import { useGetAllPrioritiesQuery } from '../../store/api/prioritiesApi';
 
@@ -15,6 +16,15 @@ import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
 interface TaskItemProps extends ITask {
     index: number;
+    onUpdate: (
+        id: number,
+        {}: {
+            name: string;
+            category: number | null;
+            priority: number | null;
+            due_date: string;
+        },
+    ) => void;
     onDelete: (id: number) => void;
 }
 
@@ -28,9 +38,25 @@ export const TaskItem = React.memo(
         is_done,
         index,
         onDelete,
+        onUpdate,
     }: TaskItemProps) => {
+        const [updateTask] = useUpdateTaskMutation();
         const { data: categories } = useGetAllCategoriesQuery('');
         const { data: priorities } = useGetAllPrioritiesQuery('');
+
+        const handleUpdate = () => {
+            onUpdate(id, { name, category, priority, due_date });
+        };
+
+        const handleChecked = () => {
+            const newvalue = {
+                id,
+                body: {
+                    is_done: !is_done,
+                },
+            };
+            updateTask(newvalue);
+        };
 
         const handleDelete = () => {
             onDelete(id);
@@ -64,17 +90,43 @@ export const TaskItem = React.memo(
                 >
                     {index + 1}
                 </TableCell>
-                <TableCell sx={{ pl: 0 }}>{name}</TableCell>
-                <TableCell align="center">{due_date}</TableCell>
-                <TableCell align="center">
-                    {priority
-                        ? priorities?.find((item) => item.id === priority)?.name
-                        : 'Без приоритета'}
+                <TableCell
+                    sx={{
+                        pl: 0,
+                        textDecoration: is_done ? 'line-through' : '',
+                        color: is_done ? 'text.disabled' : '',
+                    }}
+                >
+                    {name}
                 </TableCell>
-                <TableCell align="center">
-                    {category
-                        ? categories?.find((item) => item.id === category)?.name
-                        : 'Без категорий'}
+                <TableCell
+                    align="center"
+                    sx={{
+                        textDecoration: is_done ? 'line-through' : '',
+                        color: is_done ? 'text.disabled' : '',
+                    }}
+                >
+                    {due_date}
+                </TableCell>
+                <TableCell
+                    align="center"
+                    sx={{
+                        textDecoration: is_done ? 'line-through' : '',
+                        color: is_done ? 'text.disabled' : '',
+                    }}
+                >
+                    {priorities?.find((item) => item.id === priority)?.name ||
+                        'Без приоритета'}
+                </TableCell>
+                <TableCell
+                    align="center"
+                    sx={{
+                        textDecoration: is_done ? 'line-through' : '',
+                        color: is_done ? 'text.disabled' : '',
+                    }}
+                >
+                    {categories?.find((item) => item.id === category)?.name ||
+                        'Без категорий'}
                 </TableCell>
                 <TableCell width="160px" align="right">
                     <IconButton
@@ -84,10 +136,18 @@ export const TaskItem = React.memo(
                     >
                         <DeleteRoundedIcon />
                     </IconButton>
-                    <IconButton size="small" sx={{ mx: 1 }}>
+                    <IconButton
+                        onClick={handleUpdate}
+                        size="small"
+                        sx={{ mx: 1 }}
+                    >
                         <ModeEditRoundedIcon />
                     </IconButton>
-                    <Checkbox checked={is_done} size="small" />
+                    <Checkbox
+                        onChange={handleChecked}
+                        checked={is_done}
+                        size="small"
+                    />
                 </TableCell>
             </TableRow>
         );

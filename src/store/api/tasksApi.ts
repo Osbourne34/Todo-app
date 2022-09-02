@@ -21,13 +21,6 @@ export const tasksApi = createApi({
             }),
             providesTags: ['Tasks'],
         }),
-        deleteTask: build.mutation({
-            query: (id: number) => ({
-                url: `tasks/${id}`,
-                method: 'delete',
-            }),
-            invalidatesTags: ['Tasks'],
-        }),
         createTask: build.mutation<
             ITask,
             {
@@ -44,6 +37,21 @@ export const tasksApi = createApi({
             }),
             invalidatesTags: ['Tasks'],
         }),
+        updateTask: build.mutation<ITask, {}>({
+            query: ({ id, body }: { id: number; body: {} }) => ({
+                url: `tasks/${id}/`,
+                method: 'patch',
+                data: body,
+            }),
+            invalidatesTags: ['Tasks'],
+        }),
+        deleteTask: build.mutation({
+            query: (id: number) => ({
+                url: `tasks/${id}`,
+                method: 'delete',
+            }),
+            invalidatesTags: ['Tasks'],
+        }),
     }),
 });
 
@@ -51,5 +59,6 @@ export const {
     useGetIncompleteTasksQuery,
     useGetTasksByCategoryQuery,
     useCreateTaskMutation,
+    useUpdateTaskMutation,
     useDeleteTaskMutation,
 } = tasksApi;
