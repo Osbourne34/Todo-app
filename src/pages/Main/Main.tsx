@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 
 import { Sidebar } from '../../components/Sidebar/Sidebar';
 import { Header } from '../../components/Header/Header';
+import { Statistics } from '../../components/Statistics/Statistics';
 import { AddTask } from '../../components/AddTask/AddTask';
 
 import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
@@ -27,6 +28,7 @@ const Main = () => {
                 }}
             >
                 <Header />
+                <Statistics />
                 <Box
                     sx={{
                         display: 'flex',

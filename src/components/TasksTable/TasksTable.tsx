@@ -30,9 +30,9 @@ export const TasksTable = () => {
             name: string;
             category: number | null;
             priority: number | null;
-            due_date: string;
+            dueDate: string | undefined;
         };
-    }>({ id: 0, body: { name: '', category: 0, priority: 0, due_date: '' } });
+    }>({ id: 0, body: { name: '', category: 0, priority: 0, dueDate: '' } });
 
     const { id } = useParams();
     const { data: tasks, isLoading } = useGetTasksByCategoryQuery(id);
@@ -45,17 +45,17 @@ export const TasksTable = () => {
             name,
             category,
             priority,
-            due_date,
+            dueDate,
         }: {
             name: string;
             category: number | null;
             priority: number | null;
-            due_date: string;
+            dueDate: string | undefined;
         },
     ) => {
         setIdToUpdateAnyBody({
             id,
-            body: { name, category, priority, due_date },
+            body: { name, category, priority, dueDate },
         });
     };
 
@@ -81,7 +81,7 @@ export const TasksTable = () => {
     const handleCloseForm = () => {
         setIdToUpdateAnyBody({
             id: 0,
-            body: { name: '', category: 0, priority: 0, due_date: '' },
+            body: { name: '', category: 0, priority: 0, dueDate: '' },
         });
     };
 
@@ -140,6 +140,7 @@ export const TasksTable = () => {
 
             <Dialog open={idToUpdateAndBody.id !== 0} onClose={handleCloseForm}>
                 <TaskForm
+                    title="Редактирование задачи"
                     onSubmit={handleUpdateSubmit}
                     onClose={handleCloseForm}
                     loading={false}

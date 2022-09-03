@@ -39,6 +39,7 @@ export const AddTask = () => {
 
             <Dialog open={open} onClose={handleClose} fullWidth>
                 <TaskForm
+                    title="Добавление задачи"
                     onSubmit={handleSubmit}
                     onClose={handleClose}
                     loading={isLoading}

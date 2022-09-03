@@ -25,7 +25,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Alert from '@mui/material/Alert';
 
 interface TaskFormProps {
-    title?: string;
+    title: string;
     onSubmit: (
         name: string,
         category: number | null,
@@ -38,11 +38,12 @@ interface TaskFormProps {
     name?: string;
     category?: number | null;
     priority?: number | null;
-    due_date?: string | undefined;
+    dueDate?: string | undefined;
 }
 
 export const TaskForm = React.memo(
     ({
+        title,
         onSubmit,
         onClose,
         loading,
@@ -50,13 +51,13 @@ export const TaskForm = React.memo(
         name,
         category,
         priority,
-        due_date,
+        dueDate,
     }: TaskFormProps) => {
         const nameTask = useInput(emptyValidator, name || '');
         const [categoryTask, setCategoryTask] = useState<number>(category || 0);
         const [priorityTask, setPriorityTask] = useState<number>(priority || 0);
         const [dueDateTask, setDueDateTask] = useState<Dayjs | null>(
-            dayjs(due_date),
+            dayjs(dueDate),
         );
 
         const categories =
@@ -88,7 +89,7 @@ export const TaskForm = React.memo(
 
         return (
             <>
-                <DialogTitle>Добавление задачи</DialogTitle>
+                <DialogTitle>{title}</DialogTitle>
                 <DialogContent>
                     <form onSubmit={handleSubmit}>
                         {error && (

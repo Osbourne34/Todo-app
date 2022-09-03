@@ -22,7 +22,7 @@ interface TaskItemProps extends ITask {
             name: string;
             category: number | null;
             priority: number | null;
-            due_date: string;
+            dueDate: string | undefined;
         },
     ) => void;
     onDelete: (id: number) => void;
@@ -45,7 +45,7 @@ export const TaskItem = React.memo(
         const { data: priorities } = useGetAllPrioritiesQuery('');
 
         const handleUpdate = () => {
-            onUpdate(id, { name, category, priority, due_date });
+            onUpdate(id, { name, category, priority, dueDate: due_date });
         };
 
         const handleChecked = () => {
