@@ -3,7 +3,10 @@ import React from 'react';
 import { ITask } from '../../models/ITask';
 
 import { useUpdateTaskMutation } from '../../store/api/tasksApi';
-import { useGetAllCategoriesQuery } from '../../store/api/categoriesApi';
+import {
+    useGetAllCategoriesQuery,
+    useLazyGetAllCategoriesQuery,
+} from '../../store/api/categoriesApi';
 import { useGetAllPrioritiesQuery } from '../../store/api/prioritiesApi';
 
 import TableCell from '@mui/material/TableCell';
@@ -23,6 +26,7 @@ interface TaskItemProps extends ITask {
             category: number | null;
             priority: number | null;
             dueDate: string | undefined;
+            is_done: boolean;
         },
     ) => void;
     onDelete: (id: number) => void;
@@ -43,9 +47,16 @@ export const TaskItem = React.memo(
         const [updateTask] = useUpdateTaskMutation();
         const { data: categories } = useGetAllCategoriesQuery('');
         const { data: priorities } = useGetAllPrioritiesQuery('');
+        const [getAllCategories] = useLazyGetAllCategoriesQuery();
 
         const handleUpdate = () => {
-            onUpdate(id, { name, category, priority, dueDate: due_date });
+            onUpdate(id, {
+                name,
+                category,
+                priority,
+                dueDate: due_date,
+                is_done,
+            });
         };
 
         const handleChecked = () => {
@@ -55,7 +66,11 @@ export const TaskItem = React.memo(
                     is_done: !is_done,
                 },
             };
-            updateTask(newvalue);
+            updateTask(newvalue)
+                .unwrap()
+                .then(() => {
+                    getAllCategories('');
+                });
         };
 
         const handleDelete = () => {

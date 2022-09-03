@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom';
 
 import {
     useGetTasksByCategoryQuery,
+    useUpdateTaskMutation,
     useDeleteTaskMutation,
 } from '../../store/api/tasksApi';
+import { useLazyGetAllCategoriesQuery } from '../../store/api/categoriesApi';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -31,11 +33,24 @@ export const TasksTable = () => {
             category: number | null;
             priority: number | null;
             dueDate: string | undefined;
+            is_done: boolean;
         };
-    }>({ id: 0, body: { name: '', category: 0, priority: 0, dueDate: '' } });
+    }>({
+        id: 0,
+        body: {
+            name: '',
+            category: 0,
+            priority: 0,
+            dueDate: '',
+            is_done: false,
+        },
+    });
 
     const { id } = useParams();
     const { data: tasks, isLoading } = useGetTasksByCategoryQuery(id);
+    const [getAllCategories] = useLazyGetAllCategoriesQuery();
+    const [updateTask, { isLoading: updateTaskLoading, isError }] =
+        useUpdateTaskMutation();
     const [deleteTask, { isLoading: deleteTaskLoading }] =
         useDeleteTaskMutation();
 
@@ -46,16 +61,18 @@ export const TasksTable = () => {
             category,
             priority,
             dueDate,
+            is_done,
         }: {
             name: string;
             category: number | null;
             priority: number | null;
             dueDate: string | undefined;
+            is_done: boolean;
         },
     ) => {
         setIdToUpdateAnyBody({
             id,
-            body: { name, category, priority, dueDate },
+            body: { name, category, priority, dueDate, is_done },
         });
     };
 
@@ -68,8 +85,17 @@ export const TasksTable = () => {
         category: number | null,
         priority: number | null,
         dueDate: string | undefined,
+        is_done: boolean,
     ) => {
-        console.log(name, category, priority, dueDate);
+        updateTask({
+            id: idToUpdateAndBody.id,
+            body: { name, category, priority, due_date: dueDate, is_done },
+        })
+            .unwrap()
+            .then(() => {
+                getAllCategories('');
+                handleCloseForm();
+            });
     };
 
     const handleDeletionConfirmation = () => {
@@ -81,7 +107,13 @@ export const TasksTable = () => {
     const handleCloseForm = () => {
         setIdToUpdateAnyBody({
             id: 0,
-            body: { name: '', category: 0, priority: 0, dueDate: '' },
+            body: {
+                name: '',
+                category: 0,
+                priority: 0,
+                dueDate: '',
+                is_done: false,
+            },
         });
     };
 

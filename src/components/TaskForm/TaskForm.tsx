@@ -31,6 +31,7 @@ interface TaskFormProps {
         category: number | null,
         priority: number | null,
         dueDate: string | undefined,
+        is_done: boolean,
     ) => void;
     onClose: () => void;
     loading: boolean;
@@ -39,6 +40,7 @@ interface TaskFormProps {
     category?: number | null;
     priority?: number | null;
     dueDate?: string | undefined;
+    is_done?: boolean | undefined;
 }
 
 export const TaskForm = React.memo(
@@ -52,6 +54,7 @@ export const TaskForm = React.memo(
         category,
         priority,
         dueDate,
+        is_done,
     }: TaskFormProps) => {
         const nameTask = useInput(emptyValidator, name || '');
         const [categoryTask, setCategoryTask] = useState<number>(category || 0);
@@ -84,6 +87,7 @@ export const TaskForm = React.memo(
                 categoryTask ? categoryTask : null,
                 priorityTask ? priorityTask : null,
                 dueDateTask?.format('YYYY-MM-DD'),
+                is_done ? is_done : false,
             );
         };
 

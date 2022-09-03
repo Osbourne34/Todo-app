@@ -28,6 +28,7 @@ export const tasksApi = createApi({
                 due_date: string | undefined;
                 category: number | null;
                 priority: number | null;
+                is_done: false;
             }
         >({
             query: (body) => ({

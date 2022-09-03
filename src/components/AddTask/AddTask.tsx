@@ -19,7 +19,13 @@ export const AddTask = () => {
         priority: number | null,
         dueDate: string | undefined,
     ) => {
-        createTask({ name, due_date: dueDate, category, priority })
+        createTask({
+            name,
+            due_date: dueDate,
+            category,
+            priority,
+            is_done: false,
+        })
             .unwrap()
             .then(() => {
                 getAllCategories('');
