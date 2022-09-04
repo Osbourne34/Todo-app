@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { useAppDispatch } from '../../hooks/redux';
-import { setIsShowSidebar } from '../../store/reducers/uiSlice/uiSlice';
+import {
+    setIsShowSidebar,
+    setIsShowStatistics,
+} from '../../store/reducers/uiSlice/uiSlice';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -27,7 +30,12 @@ export const Header = () => {
                 <IconButton onClick={() => dispatch(setIsShowSidebar())}>
                     <MenuRoundedIcon />
                 </IconButton>
-                <Button sx={{ ml: 2 }}>Скрыть статистику</Button>
+                <Button
+                    onClick={() => dispatch(setIsShowStatistics())}
+                    sx={{ ml: 2 }}
+                >
+                    Скрыть статистику
+                </Button>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <SettingPriorities />

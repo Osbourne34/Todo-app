@@ -1,8 +1,12 @@
 import React from 'react';
 
+import './Statistics.css';
+
 import { useLocation } from 'react-router-dom';
 
 import { useGetStatisticsQuery } from '../../store/api/tasksApi';
+import { useAppSelector } from '../../hooks/redux';
+import { ui } from '../../store/reducers/uiSlice/uiSlice';
 
 import Box from '@mui/material/Box';
 
@@ -13,6 +17,7 @@ import InsertChartRoundedIcon from '@mui/icons-material/InsertChartRounded';
 import { StatisticsItem } from './StatisticsItem/StatisticsItem';
 
 export const Statistics = () => {
+    const { isShowStatistics } = useAppSelector(ui);
     const { pathname } = useLocation();
     const { data: statistics, isLoading } = useGetStatisticsQuery(
         pathname.slice(1) ? +pathname.slice(1) : 0,
@@ -24,7 +29,9 @@ export const Statistics = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 gap: 4,
-                my: 4,
+                height: isShowStatistics ? 'auto' : 0,
+                mt: isShowStatistics ? 4 : 0,
+                overflow: isShowStatistics ? 'visible' : 'hidden',
             }}
         >
             <StatisticsItem

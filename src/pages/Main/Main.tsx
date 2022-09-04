@@ -34,7 +34,7 @@ const Main = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        mb: 4,
+                        my: 4,
                     }}
                 >
                     <Box sx={{ display: 'flex' }}>
