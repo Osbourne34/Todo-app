@@ -21,6 +21,22 @@ export const tasksApi = createApi({
             }),
             providesTags: ['Tasks'],
         }),
+        getStatistics: build.query<
+            {
+                tasks_count: number;
+                completed_tasks: number;
+                incompleted_tasks: number;
+                completed_percent: number;
+                incompleted_percent: number;
+            },
+            number
+        >({
+            query: (id: number) => ({
+                url: `category_statistic/${id}/`,
+                method: 'get',
+            }),
+            providesTags: ['Tasks'],
+        }),
         createTask: build.mutation<
             ITask,
             {
@@ -62,4 +78,5 @@ export const {
     useCreateTaskMutation,
     useUpdateTaskMutation,
     useDeleteTaskMutation,
+    useGetStatisticsQuery,
 } = tasksApi;
