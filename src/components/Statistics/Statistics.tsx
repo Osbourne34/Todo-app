@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './Statistics.css';
-
 import { useLocation } from 'react-router-dom';
 
 import { useGetStatisticsQuery } from '../../store/api/tasksApi';

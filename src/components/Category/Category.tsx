@@ -1,86 +1,68 @@
-import React, { MouseEvent } from 'react';
+import React, { useState } from 'react';
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
-import { useGetIncompleteTasksQuery } from '../../store/api/tasksApi';
+import {
+    useGetCategoryQuery,
+    useUpdateCategoryMutation,
+} from '../../store/api/categoriesApi';
 
-import Paper from '@mui/material/Paper';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ModeEditRoundedIcon from '@mui/icons-material/ModeEditRounded';
 
-interface CategoryProps {
-    link: number | string;
-    name: string;
-    incompleteTasks: number;
-    removable: boolean;
-    onDelete?: (
-        e: MouseEvent<HTMLButtonElement>,
-        id: { id: string | number },
-    ) => void;
-}
+import { MainForm } from '../MainForm/MainForm';
 
-export const Category = React.memo(
-    ({ link, name, incompleteTasks, removable, onDelete }: CategoryProps) => {
-        const navigate = useNavigate();
-        const { pathname } = useLocation();
+export const Category = () => {
+    const { pathname } = useLocation();
+    const [open, setOpen] = useState<boolean>(false);
 
-        const { data: incompleteTasksAll } = useGetIncompleteTasksQuery('', {
-            skip: removable,
-        });
+    const { data: category } = useGetCategoryQuery(pathname, {
+        skip: pathname === '/',
+    });
 
-        const handleRemove = (e: MouseEvent<HTMLButtonElement>) => {
-            if (onDelete) {
-                onDelete(e, { id: link });
-            }
-        };
+    const [updateCategory, { isLoading, isError }] =
+        useUpdateCategoryMutation();
 
-        return (
-            <Paper
-                className={
-                    pathname === `/${link === '/' ? '' : link}` ? 'active' : ''
-                }
-                onClick={() => {
-                    navigate(`${link}`);
-                }}
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    py: 1.5,
-                    px: 2,
-                    mb: removable ? 1 : 0,
-                    cursor: 'pointer',
-                    '&:hover': {
-                        backgroundColor: 'grey.100',
-                    },
-                    '&:hover button': {
-                        display: 'flex',
-                    },
-                }}
-            >
-                <Typography>{name}</Typography>
+    const handleUpdateSubmit = (name: string) => {
+        updateCategory({ id: +pathname.slice(1), name })
+            .unwrap()
+            .then(() => handleClose());
+    };
 
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {removable && (
-                        <IconButton
-                            onClick={handleRemove}
-                            size="small"
-                            sx={{ display: 'none', mr: 1 }}
-                        >
-                            <DeleteRoundedIcon />
-                        </IconButton>
-                    )}
-                    <Paper sx={{ p: 1, bgcolor: 'grey.300' }}>
-                        <Typography variant="body2" component="div">
-                            {incompleteTasksAll?.incomplete_count ||
-                                incompleteTasks}
-                        </Typography>
-                    </Paper>
-                </Box>
-            </Paper>
-        );
-    },
-);
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    return (
+        <>
+            <Box sx={{ display: 'flex' }}>
+                <Typography variant="h4">
+                    {category && pathname !== '/' ? category?.name : 'Все'}
+                </Typography>
+                {category && pathname !== '/' && (
+                    <IconButton onClick={() => setOpen(true)} sx={{ ml: 1 }}>
+                        <ModeEditRoundedIcon />
+                    </IconButton>
+                )}
+            </Box>
+            <Dialog open={open} onClose={handleClose} fullWidth>
+                <DialogTitle>Редактирование категорий</DialogTitle>
+                <DialogContent>
+                    <MainForm
+                        onSubmit={handleUpdateSubmit}
+                        onClose={handleClose}
+                        loading={isLoading}
+                        error={isError}
+                        value={category?.name}
+                    />
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+};

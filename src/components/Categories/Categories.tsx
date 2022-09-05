@@ -12,7 +12,7 @@ import { useAppSelector } from '../../hooks/redux';
 
 import Typography from '@mui/material/Typography';
 
-import { Category } from '../Category/Category';
+import { CategoryItem } from '../CategoryItem/CategoryItem';
 import { Loader } from '../Loader/Loader';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 
@@ -79,7 +79,7 @@ export const Categories = () => {
             {categoriesFound &&
                 categoriesFound.map(({ id, name, get_incomplete_tasks }) => {
                     return (
-                        <Category
+                        <CategoryItem
                             key={id}
                             link={id}
                             name={name}

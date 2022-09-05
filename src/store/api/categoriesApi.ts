@@ -14,6 +14,13 @@ export const categoriesApi = createApi({
             }),
             providesTags: ['Category'],
         }),
+        getCategory: build.query<ICategory, string>({
+            query: (id: string) => ({
+                url: `categories${id}/`,
+                method: 'get',
+            }),
+            providesTags: ['Category'],
+        }),
         createCategory: build.mutation<ICategory, { name: string }>({
             query: (body) => ({
                 url: 'categories/',
@@ -44,6 +51,7 @@ export const categoriesApi = createApi({
 
 export const {
     useGetAllCategoriesQuery,
+    useGetCategoryQuery,
     useLazyGetAllCategoriesQuery,
     useCreateCategoryMutation,
     useUpdateCategoryMutation,

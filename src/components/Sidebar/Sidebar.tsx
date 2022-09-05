@@ -12,7 +12,7 @@ import Divider from '@mui/material/Divider';
 
 import { AddCategory } from '../AddCategory/AddCategory';
 import { CategorySearch } from '../CategorySearch/CategorySearch';
-import { Category } from '../Category/Category';
+import { CategoryItem } from '../CategoryItem/CategoryItem';
 import { Categories } from '../Categories/Categories';
 
 export const Sidebar = () => {
@@ -20,10 +20,9 @@ export const Sidebar = () => {
 
     return (
         <Paper
-            className={isShowSidebar ? 'show' : ''}
             elevation={10}
             sx={{
-                width: '300px',
+                width: !isShowSidebar ? '300px' : 0,
                 height: '100vh',
                 flexShrink: 0,
                 overflowY: 'auto',
@@ -47,7 +46,7 @@ export const Sidebar = () => {
 
             <Box sx={{ p: 2 }}>
                 <CategorySearch />
-                <Category
+                <CategoryItem
                     link="/"
                     name="Все"
                     incompleteTasks={0}
