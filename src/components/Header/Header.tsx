@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { useAppDispatch } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
     setIsShowSidebar,
     setIsShowStatistics,
+    ui,
 } from '../../store/reducers/uiSlice/uiSlice';
 
 import Box from '@mui/material/Box';
@@ -17,6 +18,7 @@ import { SettingPriorities } from '../SettingPriorities/SettingPriorities';
 
 export const Header = () => {
     const dispatch = useAppDispatch();
+    const { isShowStatistics } = useAppSelector(ui);
 
     return (
         <Box
@@ -34,7 +36,9 @@ export const Header = () => {
                     onClick={() => dispatch(setIsShowStatistics())}
                     sx={{ ml: 2 }}
                 >
-                    Скрыть статистику
+                    {isShowStatistics
+                        ? 'Скрыть статистику'
+                        : 'Показать статистику'}
                 </Button>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>

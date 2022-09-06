@@ -16,12 +16,24 @@ export const tasksApi = createApi({
         }),
         getTasksByCategory: build.query<
             { count: number; results: ITask[] },
-            { id: string | undefined; page: number; rowsPerPage: number }
+            {
+                id: string | undefined;
+                page: number;
+                rowsPerPage: number;
+                orderBy: string;
+                sortType: string;
+            }
         >({
-            query: ({ id, page, rowsPerPage }) => ({
+            query: ({ id, page, rowsPerPage, orderBy, sortType }) => ({
                 url: `tasks/?category=${
                     id ? id : ''
-                }&page_size=${rowsPerPage}&page=${page}`,
+                }&page_size=${rowsPerPage}&page=${page}${
+                    sortType !== 'default'
+                        ? `&ordering=${
+                              sortType === 'desc' ? '-' : ''
+                          }${orderBy}`
+                        : ''
+                }`,
                 method: 'get',
             }),
             providesTags: ['Tasks'],

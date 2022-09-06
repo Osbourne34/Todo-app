@@ -15,16 +15,43 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
 import Dialog from '@mui/material/Dialog';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 
 import { Loader } from '../Loader/Loader';
 import { TaskItem } from '../TaskItem/TaskItem';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 import { TaskForm } from '../TaskForm/TaskForm';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
+
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+
+const tableCell = [
+    {
+        id: 1,
+        title: 'Название',
+        value: 'name',
+    },
+    {
+        id: 2,
+        title: 'Срок',
+        value: 'due_date',
+    },
+    {
+        id: 3,
+        title: 'Приоритет',
+        value: 'priority',
+    },
+    {
+        id: 4,
+        title: 'Категория',
+        value: 'category',
+    },
+];
 
 export const TasksTable = () => {
     const [idToRemove, setIdToDelete] = useState<number>(0);
@@ -51,11 +78,18 @@ export const TasksTable = () => {
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(5);
 
+    const [sortType, setSortType] = useState<'default' | 'desc' | 'asc'>(
+        'default',
+    );
+    const [orderBy, setOrderBy] = useState<string>('');
+
     const { id } = useParams();
     const { data, isLoading } = useGetTasksByCategoryQuery({
         id,
         page: page + 1,
         rowsPerPage,
+        orderBy,
+        sortType,
     });
     const [getAllCategories] = useLazyGetAllCategoriesQuery();
     const [updateTask, { isLoading: updateTaskLoading, isError }] =
@@ -147,6 +181,20 @@ export const TasksTable = () => {
         setPage(0);
     };
 
+    const handleSort = (value: string) => {
+        setOrderBy(value);
+        setSortType((prevState: any) => {
+            switch (prevState) {
+                case 'default':
+                    return 'asc';
+                case 'asc':
+                    return 'desc';
+                default:
+                    return 'default';
+            }
+        });
+    };
+
     if (isLoading) {
         return <Loader />;
     }
@@ -170,10 +218,72 @@ export const TasksTable = () => {
                                         p: 0,
                                     }}
                                 ></TableCell>
-                                <TableCell sx={{ pl: 0 }}>Название</TableCell>
+                                {tableCell.map(
+                                    ({ value, title, id }, index) => {
+                                        return (
+                                            <TableCell
+                                                align={
+                                                    index === 0
+                                                        ? 'left'
+                                                        : 'center'
+                                                }
+                                                sx={{
+                                                    pl: index === 0 ? 0 : '',
+                                                }}
+                                                key={id}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        height: 33,
+                                                        '&:hover button': {
+                                                            opacity: 1,
+                                                        },
+                                                    }}
+                                                >
+                                                    {title}
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            handleSort(value)
+                                                        }
+                                                        size="small"
+                                                        color={
+                                                            value === orderBy &&
+                                                            sortType !==
+                                                                'default'
+                                                                ? 'primary'
+                                                                : 'inherit'
+                                                        }
+                                                        sx={{
+                                                            opacity:
+                                                                value !==
+                                                                orderBy
+                                                                    ? 0
+                                                                    : 1,
+                                                            transform:
+                                                                sortType !==
+                                                                'desc'
+                                                                    ? 'rotate(0deg)'
+                                                                    : 'rotate(180deg)',
+                                                        }}
+                                                    >
+                                                        <ArrowUpwardRoundedIcon
+                                                            sx={{
+                                                                fontSize:
+                                                                    'inherit',
+                                                            }}
+                                                        />
+                                                    </IconButton>
+                                                </Box>
+                                            </TableCell>
+                                        );
+                                    },
+                                )}
+                                {/* <TableCell sx={{ pl: 0 }}>Название</TableCell>
                                 <TableCell align="center">Срок</TableCell>
                                 <TableCell align="center">Приоритет</TableCell>
-                                <TableCell align="center">Категория</TableCell>
+                                <TableCell align="center">Категория</TableCell> */}
                                 <TableCell width="160px"></TableCell>
                             </TableRow>
                         </TableHead>
