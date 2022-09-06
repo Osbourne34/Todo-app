@@ -80,11 +80,11 @@ export const TaskItem = React.memo(
         return (
             <TableRow
                 hover
-                sx={{
-                    '&:last-child td, &:last-child th': {
-                        border: 0,
-                    },
-                }}
+                // sx={{
+                //     '&:last-child td, &:last-child th': {
+                //         border: 0,
+                //     },
+                // }}
             >
                 <TableCell
                     sx={{
@@ -103,7 +103,7 @@ export const TaskItem = React.memo(
                         p: 0,
                     }}
                 >
-                    {index + 1}
+                    {index}
                 </TableCell>
                 <TableCell
                     sx={{

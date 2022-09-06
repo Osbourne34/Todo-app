@@ -14,9 +14,14 @@ export const tasksApi = createApi({
             }),
             providesTags: ['Tasks'],
         }),
-        getTasksByCategory: build.query<ITask[], string | undefined>({
-            query: (category) => ({
-                url: `tasks/?category=${category ? category : ''}`,
+        getTasksByCategory: build.query<
+            { count: number; results: ITask[] },
+            { id: string | undefined; page: number; rowsPerPage: number }
+        >({
+            query: ({ id, page, rowsPerPage }) => ({
+                url: `tasks/?category=${
+                    id ? id : ''
+                }&page_size=${rowsPerPage}&page=${page}`,
                 method: 'get',
             }),
             providesTags: ['Tasks'],

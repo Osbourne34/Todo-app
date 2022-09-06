@@ -23,6 +23,8 @@ import { Loader } from '../Loader/Loader';
 import { TaskItem } from '../TaskItem/TaskItem';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
 import { TaskForm } from '../TaskForm/TaskForm';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
 
 export const TasksTable = () => {
     const [idToRemove, setIdToDelete] = useState<number>(0);
@@ -46,8 +48,15 @@ export const TasksTable = () => {
         },
     });
 
+    const [page, setPage] = useState<number>(0);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+
     const { id } = useParams();
-    const { data: tasks, isLoading } = useGetTasksByCategoryQuery(id);
+    const { data, isLoading } = useGetTasksByCategoryQuery({
+        id,
+        page: page + 1,
+        rowsPerPage,
+    });
     const [getAllCategories] = useLazyGetAllCategoriesQuery();
     const [updateTask, { isLoading: updateTaskLoading, isError }] =
         useUpdateTaskMutation();
@@ -101,7 +110,10 @@ export const TasksTable = () => {
     const handleDeletionConfirmation = () => {
         deleteTask(idToRemove)
             .unwrap()
-            .then(() => handleCloseConfirm());
+            .then(() => {
+                getAllCategories('');
+                handleCloseConfirm();
+            });
     };
 
     const handleCloseForm = () => {
@@ -121,13 +133,27 @@ export const TasksTable = () => {
         setIdToDelete(0);
     };
 
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(+e.target.value);
+        setPage(0);
+    };
+
     if (isLoading) {
         return <Loader />;
     }
 
     return (
         <>
-            {tasks && tasks.length > 0 ? (
+            {data?.results && data.results.length > 0 ? (
                 <TableContainer component={Paper} sx={{ p: 2 }}>
                     <Table>
                         <TableHead>
@@ -152,16 +178,31 @@ export const TasksTable = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tasks.map((task, index) => (
+                            {data.results.map((task, index) => (
                                 <TaskItem
                                     key={task.id}
-                                    index={index}
+                                    index={index + 1}
                                     onUpdate={handleUpdate}
                                     onDelete={handleDelete}
                                     {...task}
                                 />
                             ))}
                         </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25]}
+                                    colSpan={7}
+                                    count={data.count}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={
+                                        handleChangeRowsPerPage
+                                    }
+                                />
+                            </TableRow>
+                        </TableFooter>
                     </Table>
                 </TableContainer>
             ) : (
@@ -175,8 +216,8 @@ export const TasksTable = () => {
                     title="Редактирование задачи"
                     onSubmit={handleUpdateSubmit}
                     onClose={handleCloseForm}
-                    loading={false}
-                    error={false}
+                    loading={updateTaskLoading}
+                    error={isError}
                     {...idToUpdateAndBody.body}
                 />
             </Dialog>
