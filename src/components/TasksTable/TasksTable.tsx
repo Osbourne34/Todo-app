@@ -280,10 +280,6 @@ export const TasksTable = () => {
                                         );
                                     },
                                 )}
-                                {/* <TableCell sx={{ pl: 0 }}>Название</TableCell>
-                                <TableCell align="center">Срок</TableCell>
-                                <TableCell align="center">Приоритет</TableCell>
-                                <TableCell align="center">Категория</TableCell> */}
                                 <TableCell width="160px"></TableCell>
                             </TableRow>
                         </TableHead>

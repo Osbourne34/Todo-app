@@ -31,13 +31,13 @@ export const StatisticsItem = ({
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        width: 100,
-                        height: 100,
+                        width: 80,
+                        height: 80,
                         mt: -4,
                         bgcolor: 'warning.light',
                     }}
                 >
-                    <Icon sx={{ color: 'common.white', fontSize: 50 }} />
+                    <Icon sx={{ color: 'common.white', fontSize: 40 }} />
                 </Paper>
                 <Typography variant="h4">
                     {loading ? (

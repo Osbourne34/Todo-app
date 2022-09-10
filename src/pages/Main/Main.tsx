@@ -31,7 +31,7 @@ const Main = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        my: 4,
+                        my: 2,
                     }}
                 >
                     <Category />
