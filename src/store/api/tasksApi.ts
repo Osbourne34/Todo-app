@@ -19,15 +19,15 @@ export const tasksApi = createApi({
             {
                 id: string | undefined;
                 page: number;
-                rowsPerPage: number;
+                limit: number;
                 orderBy: string;
                 sortType: string;
             }
         >({
-            query: ({ id, page, rowsPerPage, orderBy, sortType }) => ({
+            query: ({ id, page, limit, orderBy, sortType }) => ({
                 url: `tasks/?category=${
                     id ? id : ''
-                }&page_size=${rowsPerPage}&page=${page}${
+                }&page_size=${limit}&page=${page}${
                     sortType !== 'default'
                         ? `&ordering=${
                               sortType === 'desc' ? '-' : ''
@@ -61,7 +61,6 @@ export const tasksApi = createApi({
                 due_date: string | undefined;
                 category: number | null;
                 priority: number | null;
-                is_done: false;
             }
         >({
             query: (body) => ({

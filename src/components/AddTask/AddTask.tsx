@@ -24,7 +24,6 @@ export const AddTask = () => {
             due_date: dueDate,
             category,
             priority,
-            is_done: false,
         })
             .unwrap()
             .then(() => {

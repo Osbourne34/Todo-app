@@ -55,7 +55,7 @@ export const Statistics = () => {
             <StatisticsItem
                 loading={isLoading}
                 title="Процент незавершенных задач"
-                Icon={InsertChartRoundedIcon}
+                Icon={ThumbDownRoundedIcon}
                 value={statistics?.incompleted_percent}
             />
         </Box>

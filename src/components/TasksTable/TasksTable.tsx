@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import {
     useGetTasksByCategoryQuery,
     useUpdateTaskMutation,
     useDeleteTaskMutation,
 } from '../../store/api/tasksApi';
 import { useLazyGetAllCategoriesQuery } from '../../store/api/categoriesApi';
+import {
+    setPage,
+    setLimit,
+    setNumberOfTasks,
+} from '../../store/reducers/tasksSlice/tasksSlice';
+import { tasks } from '../../store/reducers/tasksSlice/tasksSlice';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -54,6 +61,9 @@ const tableCell = [
 ];
 
 export const TasksTable = () => {
+    const dispatch = useAppDispatch();
+    const { page, limit, numberOfTasks } = useAppSelector(tasks);
+
     const [idToRemove, setIdToDelete] = useState<number>(0);
     const [idToUpdateAndBody, setIdToUpdateAnyBody] = useState<{
         id: number;
@@ -62,7 +72,6 @@ export const TasksTable = () => {
             category: number | null;
             priority: number | null;
             dueDate: string | undefined;
-            is_done: boolean;
         };
     }>({
         id: 0,
@@ -71,12 +80,8 @@ export const TasksTable = () => {
             category: 0,
             priority: 0,
             dueDate: '',
-            is_done: false,
         },
     });
-
-    const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
 
     const [sortType, setSortType] = useState<'default' | 'desc' | 'asc'>(
         'default',
@@ -87,7 +92,7 @@ export const TasksTable = () => {
     const { data, isLoading } = useGetTasksByCategoryQuery({
         id,
         page: page + 1,
-        rowsPerPage,
+        limit,
         orderBy,
         sortType,
     });
@@ -97,6 +102,14 @@ export const TasksTable = () => {
     const [deleteTask, { isLoading: deleteTaskLoading }] =
         useDeleteTaskMutation();
 
+    useEffect(() => {
+        if (data && data?.results.length === 1) {
+            dispatch(setNumberOfTasks(1));
+        } else if (numberOfTasks === 1 && data && data?.results.length > 1) {
+            dispatch(setNumberOfTasks(0));
+        }
+    }, [data]);
+
     const handleUpdate = (
         id: number,
         {
@@ -104,18 +117,16 @@ export const TasksTable = () => {
             category,
             priority,
             dueDate,
-            is_done,
         }: {
             name: string;
             category: number | null;
             priority: number | null;
             dueDate: string | undefined;
-            is_done: boolean;
         },
     ) => {
         setIdToUpdateAnyBody({
             id,
-            body: { name, category, priority, dueDate, is_done },
+            body: { name, category, priority, dueDate },
         });
     };
 
@@ -128,11 +139,10 @@ export const TasksTable = () => {
         category: number | null,
         priority: number | null,
         dueDate: string | undefined,
-        is_done: boolean,
     ) => {
         updateTask({
             id: idToUpdateAndBody.id,
-            body: { name, category, priority, due_date: dueDate, is_done },
+            body: { name, category, priority, due_date: dueDate },
         })
             .unwrap()
             .then(() => {
@@ -146,6 +156,9 @@ export const TasksTable = () => {
             .unwrap()
             .then(() => {
                 getAllCategories('');
+                if (numberOfTasks === 1) {
+                    dispatch(setPage(0));
+                }
                 handleCloseConfirm();
             });
     };
@@ -158,7 +171,6 @@ export const TasksTable = () => {
                 category: 0,
                 priority: 0,
                 dueDate: '',
-                is_done: false,
             },
         });
     };
@@ -171,14 +183,14 @@ export const TasksTable = () => {
         event: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
-        setPage(newPage);
+        dispatch(setPage(newPage));
     };
 
-    const handleChangeRowsPerPage = (
+    const handleChangeLimit = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
-        setRowsPerPage(+e.target.value);
-        setPage(0);
+        dispatch(setLimit(+e.target.value));
+        dispatch(setPage(0));
     };
 
     const handleSort = (value: string) => {
@@ -300,12 +312,10 @@ export const TasksTable = () => {
                                     rowsPerPageOptions={[5, 10, 25]}
                                     colSpan={7}
                                     count={data.count}
-                                    rowsPerPage={rowsPerPage}
+                                    rowsPerPage={limit}
                                     page={page}
                                     onPageChange={handleChangePage}
-                                    onRowsPerPageChange={
-                                        handleChangeRowsPerPage
-                                    }
+                                    onRowsPerPageChange={handleChangeLimit}
                                 />
                             </TableRow>
                         </TableFooter>

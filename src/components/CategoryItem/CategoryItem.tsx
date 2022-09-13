@@ -2,7 +2,9 @@ import React, { MouseEvent } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useAppDispatch } from '../../hooks/redux';
 import { useGetIncompleteTasksQuery } from '../../store/api/tasksApi';
+import { setPage } from '../../store/reducers/tasksSlice/tasksSlice';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -30,6 +32,8 @@ export const CategoryItem = React.memo(
         removable,
         onDelete,
     }: CategoryItemProps) => {
+        const dispatch = useAppDispatch();
+
         const navigate = useNavigate();
         const { pathname } = useLocation();
 
@@ -49,6 +53,7 @@ export const CategoryItem = React.memo(
                     pathname === `/${link === '/' ? '' : link}` ? 'active' : ''
                 }
                 onClick={() => {
+                    dispatch(setPage(0));
                     navigate(`${link}`);
                 }}
                 sx={{
