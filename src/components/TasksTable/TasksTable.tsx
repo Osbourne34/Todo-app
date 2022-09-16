@@ -13,6 +13,8 @@ import {
     setPage,
     setLimit,
     setNumberOfTasks,
+    setSortType,
+    setOrderBy,
 } from '../../store/reducers/tasksSlice/tasksSlice';
 import { tasks } from '../../store/reducers/tasksSlice/tasksSlice';
 
@@ -62,7 +64,8 @@ const tableCell = [
 
 export const TasksTable = () => {
     const dispatch = useAppDispatch();
-    const { page, limit, numberOfTasks } = useAppSelector(tasks);
+    const { page, limit, numberOfTasks, sortType, orderBy } =
+        useAppSelector(tasks);
 
     const [idToRemove, setIdToDelete] = useState<number>(0);
     const [idToUpdateAndBody, setIdToUpdateAnyBody] = useState<{
@@ -83,18 +86,13 @@ export const TasksTable = () => {
         },
     });
 
-    const [sortType, setSortType] = useState<'default' | 'desc' | 'asc'>(
-        'default',
-    );
-    const [orderBy, setOrderBy] = useState<string>('');
-
     const { id } = useParams();
     const { data, isLoading } = useGetTasksByCategoryQuery({
         id,
         page: page + 1,
         limit,
-        orderBy,
         sortType,
+        orderBy,
     });
     const [getAllCategories] = useLazyGetAllCategoriesQuery();
     const [updateTask, { isLoading: updateTaskLoading, isError }] =
@@ -108,7 +106,7 @@ export const TasksTable = () => {
         } else if (numberOfTasks === 1 && data && data?.results.length > 1) {
             dispatch(setNumberOfTasks(0));
         }
-    }, [data]);
+    }, [data, dispatch, numberOfTasks]);
 
     const handleUpdate = (
         id: number,
@@ -193,20 +191,6 @@ export const TasksTable = () => {
         dispatch(setPage(0));
     };
 
-    const handleSort = (value: string) => {
-        setOrderBy(value);
-        setSortType((prevState: any) => {
-            switch (prevState) {
-                case 'default':
-                    return 'asc';
-                case 'asc':
-                    return 'desc';
-                default:
-                    return 'default';
-            }
-        });
-    };
-
     if (isLoading) {
         return <Loader />;
     }
@@ -256,34 +240,64 @@ export const TasksTable = () => {
                                                 >
                                                     {title}
                                                     <IconButton
-                                                        onClick={() =>
-                                                            handleSort(value)
-                                                        }
-                                                        size="small"
+                                                        sx={{
+                                                            opacity:
+                                                                value ===
+                                                                    orderBy &&
+                                                                sortType !==
+                                                                    'default'
+                                                                    ? 1
+                                                                    : 0,
+                                                        }}
                                                         color={
                                                             value === orderBy &&
                                                             sortType !==
                                                                 'default'
                                                                 ? 'primary'
-                                                                : 'inherit'
+                                                                : undefined
                                                         }
-                                                        sx={{
-                                                            opacity:
-                                                                value !==
-                                                                orderBy
-                                                                    ? 0
-                                                                    : 1,
-                                                            transform:
-                                                                sortType !==
-                                                                'desc'
-                                                                    ? 'rotate(0deg)'
-                                                                    : 'rotate(180deg)',
+                                                        onClick={() => {
+                                                            if (
+                                                                orderBy ===
+                                                                value
+                                                            ) {
+                                                                dispatch(
+                                                                    setSortType(
+                                                                        sortType,
+                                                                    ),
+                                                                );
+                                                            } else {
+                                                                dispatch(
+                                                                    setSortType(
+                                                                        'default',
+                                                                    ),
+                                                                );
+                                                            }
+
+                                                            if (
+                                                                orderBy !==
+                                                                value
+                                                            ) {
+                                                                dispatch(
+                                                                    setOrderBy(
+                                                                        value,
+                                                                    ),
+                                                                );
+                                                            }
                                                         }}
+                                                        size="small"
                                                     >
                                                         <ArrowUpwardRoundedIcon
                                                             sx={{
                                                                 fontSize:
                                                                     'inherit',
+                                                                transform:
+                                                                    value ===
+                                                                        orderBy &&
+                                                                    sortType ===
+                                                                        'asc'
+                                                                        ? 'rotate(180deg)'
+                                                                        : '',
                                                             }}
                                                         />
                                                     </IconButton>

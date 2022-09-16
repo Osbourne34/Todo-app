@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '../../hooks/redux';
 import { useGetIncompleteTasksQuery } from '../../store/api/tasksApi';
-import { setPage } from '../../store/reducers/tasksSlice/tasksSlice';
+import { setPage, clearSort } from '../../store/reducers/tasksSlice/tasksSlice';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -54,6 +54,7 @@ export const CategoryItem = React.memo(
                 }
                 onClick={() => {
                     dispatch(setPage(0));
+                    dispatch(clearSort());
                     navigate(`${link}`);
                 }}
                 sx={{

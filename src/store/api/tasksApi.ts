@@ -20,17 +20,17 @@ export const tasksApi = createApi({
                 id: string | undefined;
                 page: number;
                 limit: number;
-                orderBy: string;
-                sortType: string;
+                sortType: 'default' | 'desc' | 'asc';
+                orderBy: string | null;
             }
         >({
-            query: ({ id, page, limit, orderBy, sortType }) => ({
+            query: ({ id, page, limit, sortType, orderBy }) => ({
                 url: `tasks/?category=${
                     id ? id : ''
                 }&page_size=${limit}&page=${page}${
                     sortType !== 'default'
                         ? `&ordering=${
-                              sortType === 'desc' ? '-' : ''
+                              sortType === 'desc' ? '' : '-'
                           }${orderBy}`
                         : ''
                 }`,
